@@ -1,13 +1,8 @@
 <template>
   <view class="content">
-    <image :src="$url + '/index/1-1.png'" mode="widthFix"></image>
-    <image
-      :src="$url + '/index/1-2.png'"
-      mode="widthFix"
-      class="animate1 brief_tip"
-    ></image>
+    <image :src="$url + 'index/1-1.png'" mode="widthFix"></image>
     <!-- 轮播 -->
-    <view class="swiperBox">
+    <!-- <view class="swiperBox">
       <swiper
         class="swiper"
         :indicator-dots="indicatorDots"
@@ -26,19 +21,25 @@
           </swiper-item>
         </block>
       </swiper>
-    </view>
+    </view> -->
+    <image
+      :src="$url + 'index/1-2.png'"
+      mode="widthFix"
+      class="animate1 brief_tip"
+      @click="brief"
+    ></image>
     <!-- 滚动资讯 -->
     <image
-      :src="$url + '/index/1-3.png'"
+      :src="$url + 'index/1-3.png'"
       mode="widthFix"
       class="animate1 scrollImg"
     ></image>
     <view class="Scrolling">
-      <notice-bar style="width:100%" :list="lists"></notice-bar>
+      <notice-bar style="width:100%" :list="listLeft"></notice-bar>
     </view>
     <image
       class="scrollMore"
-      :src="$url + '/index/1-4.png'"
+      :src="$url + 'index/1-4.png'"
       mode="widthFix"
       @click="scrollMore"
     ></image>
@@ -48,9 +49,27 @@
         <view class="eventop">
           <image
             class="hotTitle"
-            :src="$url + '/index/1-6.png'"
+            :src="$url + 'index/1-6.png'"
             mode="scaleToFill"
           ></image>
+        </view>
+      </block>
+    </view>
+    <!-- 积分商城 -->
+    <view class="shop">
+      <block v-for="(item, index) in 2" :key="index">
+        <view class="out_box">
+          <view class="box">
+            <image
+              class="itemTitle"
+              :src="$url + 'index/1-7.png'"
+              mode="scaleToFill"
+            ></image>
+            <view class="text_box">
+              <view class="gift_name">礼品名称</view>
+              <view class="total">积分:</view>
+            </view>
+          </view>
         </view>
       </block>
     </view>
@@ -58,55 +77,31 @@
     <view class="project">
       <image
         class="itemTitle"
-        :src="$url + '/index/title2.png'"
-        mode="widthFix"
-      ></image>
-      <image
-        class="itemMore"
-        :src="$url + '/index/more.png'"
-        mode="widthFix"
-        @click="itemReco"
+        :src="$url + 'index/1-8.png'"
+        mode="scaleToFill"
       ></image>
     </view>
     <image
-      class="animate1 callUp"
-      :src="$url + '/yunxi/tubiao-13.png'"
+      class="projectMore"
+      :src="$url + 'index/1-5.png'"
       mode="widthFix"
-      @click="callUp"
-    ></image>
-    <image
-      class="animate1 navigation"
-      :src="$url + '/yunxi/tubiao-14.png'"
-      mode="widthFix"
-      @click="nav"
+      @click="projectMore"
     ></image>
     <!-- 家书专栏 -->
     <view class="letter">
-      <view class="letterTop">
-        <image
-          class="itemTitle"
-          :src="$url + '/index/title3.png'"
-          mode="widthFix"
-        ></image>
-        <image
-          class="itemMore"
-          :src="$url + '/index/more.png'"
-          mode="widthFix"
-          @click="itemMore"
-        ></image>
-      </view>
-      <view class="letterBottom">
-        <view
-          class="list"
-          v-for="item in BookMenu"
-          :key="item.RowID"
-          @click="itemClick(item.LinkUrl, item.Them)"
-        >
-          <text class="listTitle me-text-beyond-multi1">{{ item.Them }} </text>
-          <image :src="$url + '/index/tag.png'" mode="widthFix"></image>
-        </view>
-      </view>
+      <scroll-up-down
+        :height="'50rpx'"
+        :borderColor="'#f4f4f4'"
+        :backgroundColor="'#f4f4f4'"
+        :list="listUp"
+      ></scroll-up-down>
     </view>
+    <image
+      class="letterMore"
+      :src="$url + 'index/1-5.png'"
+      mode="widthFix"
+      @click="letterMore"
+    ></image>
   </view>
 </template>
 
@@ -116,29 +111,20 @@ var app = getApp();
 import { shareMixins } from "@/static/mixins/share.js";
 import { getResquest } from "@/utils/api.js";
 import noticeBar from "@/components/notice-bar/notice-bar.vue";
+import scrollUpDown from "@/components/my-scroll-up/scroll-up-down.vue";
 export default {
   mixins: [shareMixins],
   data() {
     return {
-      $url: "https://wb.jaas.ac.cn/SmallExePic/TianAn.SE.210513/img",
+      $url: this.url,
       indicatorDots: true,
       autoplay: true,
       interval: 3000,
       duration: 1000,
       circular: true,
-      lists: ["123", "456", "789"],
-      a: ["123"],
-      BookMenu: [],
-      width: "380rpx",
-      height: "84rpx",
-      background: "#fff",
-      color: "#000",
-      latitude: 31.7346395644246,
-      longitude: 120.79397824265288,
-      speed: 30,
+      listLeft: ["123", "456", "789"],
+      listUp: ["123", "456", "789"],
       openid: "",
-      head: [],
-      Activity: [],
     };
   },
   onLoad() {
@@ -150,14 +136,16 @@ export default {
   },
   onShow() {},
   methods: {
-    itemClick(src, title) {
+    // 品牌简介
+    brief() {
       uni.navigateTo({
-        url: `/pages/webview/index?src=${src}&title=${title}`,
+        url: "/pages/index/brand/index",
       });
     },
-    handlCard(i, val, e) {
+    // 项目咨询更多
+    scrollMore() {
       uni.navigateTo({
-        url: "/pages/index/carddetail/index?num=" + i + "&val=" + val,
+        url: "/pages/index/projectInfo/index",
       });
     },
     // 拨打电话
@@ -221,55 +209,24 @@ export default {
         uni.showTabBar();
       });
     },
-    // 家属专栏更多
-    itemMore() {
-      uni.navigateTo({
-        url: "/pages/yunxi/realTimeInfo/index?i=2&title=家属专栏",
-        animationType: "pop-in",
-        animationDuration: 200,
-      });
-    },
-    // 项目推荐更多
-    itemReco() {
-      uni.switchTab({
-        url: "/pages/yunxi/index",
-      });
-    },
-    // 品牌资讯更多
-    scrollMore() {
-      uni.navigateTo({
-        url: "/pages/yunxi/realTimeInfo/index?i=1&title=品牌资讯",
-        animationType: "pop-in",
-        animationDuration: 200,
-      });
-    },
-    // 热门活动
-    events(href, e) {},
-    // 热门活动更多
-    hotMore() {
-      uni.navigateTo({
-        url: "/pages/index/event/index",
-        animationType: "pop-in",
-        animationDuration: 200,
-      });
-    },
   },
   components: {
     noticeBar,
+    scrollUpDown,
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .content {
-  background: #fff;
+  background: #f4f4f4;
   position: relative;
   width: 100%;
   height: auto;
   .brief_tip {
     width: 40%;
     left: 30%;
-    top: 15.5%;
+    top: 16%;
   }
   .swiperBox {
     position: absolute;
@@ -285,14 +242,14 @@ export default {
   .scrollImg {
     width: 666rpx;
     left: 42rpx;
-    top: 20%;
+    top: 21%;
   }
   .Scrolling {
     position: absolute;
     width: 351rpx;
     height: 60rpx;
     left: 213rpx;
-    top: 20%;
+    top: 21%;
     display: flex;
     overflow: hidden;
     align-items: center;
@@ -300,14 +257,14 @@ export default {
   .scrollMore {
     width: 100rpx;
     position: absolute;
-    top: 20.7%;
+    top: 21.7%;
     left: 581rpx;
   }
   .hotEvent {
     position: absolute;
     width: 666rpx;
     height: 30%;
-    top: 26.3%;
+    top: 28.3%;
     left: 42rpx;
     display: flex;
     flex-direction: column;
@@ -321,82 +278,95 @@ export default {
       overflow: hidden;
       .hotTitle {
         border: 4rpx solid #ccc;
-        -webkit-border-image: linear-gradient(#2ed, #f80) 20 20;
+        -webkit-border-image: linear-gradient(#6dc7c5, #e2be7b) 20 20;
         border-radius: 20rpx;
         width: 100%;
         height: 100%;
       }
     }
   }
-  .project {
+  .shop {
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
     justify-content: space-between;
-    height: 60rpx;
+    height: 400rpx;
     width: 666rpx;
     position: absolute;
-    top: 57%;
-    left: 43rpx;
-    .itemTitle {
-      width: 40%;
-    }
-    .itemMore {
-      width: 16%;
+    top: 62.5%;
+    left: 42rpx;
+    .out_box {
+      width: 320rpx;
+      height: 360rpx;
+      box-sizing: border-box;
+      padding: 4rpx;
+      border-radius: 20rpx;
+      background-image: -webkit-linear-gradient(top, #6dc7c5 3%, #e2be7b 70%);
+      .box {
+        border-radius: 20rpx;
+        width: 100%;
+        height: 100%;
+        background-color: #f4f4f4;
+        image {
+          width: 100%;
+          height: 280rpx;
+        }
+        .text_box {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 40rpx;
+          color: #55636e;
+          font-size: 26rpx;
+          margin-top: 10rpx;
+          padding: 0 10rpx;
+          .gift_name {
+            width: 170rpx;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+          }
+          .total {
+            width: 130rpx;
+            text-align: left;
+          }
+        }
+      }
     }
   }
-  .navigation {
-    width: 90rpx;
-    top: 73.2%;
-    left: 614rpx;
+  .project {
+    position: absolute;
+    width: 264rpx;
+    height: 264rpx;
+    top: 80.45%;
+    overflow: hidden;
+    left: 42rpx;
+    border-radius: 20rpx;
+    image {
+      width: 100%;
+      height: 100%;
+    }
   }
-  .callUp {
-    width: 160rpx;
-    top: 70.5%;
-    left: 200rpx;
+  .projectMore {
+    position: absolute;
+    width: 120rpx;
+    top: 78%;
+    right: 52rpx;
   }
   .letter {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 666rpx;
-    height: 280rpx;
     position: absolute;
-    top: 82%;
-    left: 43rpx;
-    .letterTop {
-      width: 100%;
-      height: 60rpx;
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      .itemTitle {
-        width: 40%;
-      }
-      .itemMore {
-        width: 16%;
-      }
-    }
-    .letterBottom {
-      height: 200rpx;
-      width: 100%;
-      .list {
-        width: 100%;
-        height: 80rpx;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        border-bottom: 1px solid #e4e4e4;
-        image {
-          width: 24rpx;
-        }
-        .listTitle {
-          font-size: 24rpx;
-          max-width: 600rpx;
-          overflow: hidden;
-        }
-      }
-    }
+    width: 400rpx;
+    height: 50rpx;
+    top: 94.95%;
+    left: 175rpx;
+  }
+  .letterMore {
+    position: absolute;
+    width: 120rpx;
+    top: 92.5%;
+    right: 52rpx;
   }
 }
 </style>

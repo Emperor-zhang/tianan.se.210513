@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App'
 
 Vue.config.productionTip = false
+Vue.prototype.url = "https://wb.jaas.ac.cn/SmallExePic/TianAn.SE.210513/img/"
 
 App.mpType = 'app'
 

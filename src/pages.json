@@ -7,6 +7,18 @@
       }
     },
     {
+      "path": "pages/index/brand/index",
+      "style": {
+        "navigationBarTitleText": "品牌简介"
+      }
+    },
+    {
+      "path": "pages/index/projectInfo/index",
+      "style": {
+        "navigationBarTitleText": "项目咨询"
+      }
+    },
+    {
       "path": "pages/login/index",
       "style": {
         "navigationBarTitleText": "授权"
@@ -34,7 +46,6 @@
   "tabBar": {
     "color": "#61b7b6",
     "selectedColor": "#dbb674",
-    "iconWidth": "30px",
     "backgroundColor": "linear-gradient(#47CECF,#BAEED5)",
     "list": [
       {
