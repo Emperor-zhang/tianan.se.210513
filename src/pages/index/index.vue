@@ -1,27 +1,6 @@
 <template>
   <view class="content">
     <image :src="$url + 'index/1-1.png'" mode="widthFix"></image>
-    <!-- 轮播 -->
-    <!-- <view class="swiperBox">
-      <swiper
-        class="swiper"
-        :indicator-dots="indicatorDots"
-        :autoplay="autoplay"
-        :interval="interval"
-        :duration="duration"
-        :circular="circular"
-      >
-        <block v-for="item in head" :key="item.RowID">
-          <swiper-item>
-            <image
-              class="swiper-item"
-              :src="item.ImgUrl"
-              mode="widthFix"
-            ></image>
-          </swiper-item>
-        </block>
-      </swiper>
-    </view> -->
     <image
       :src="$url + 'index/1-2.png'"
       mode="widthFix"
@@ -58,7 +37,7 @@
     <!-- 积分商城 -->
     <view class="shop">
       <block v-for="(item, index) in 2" :key="index">
-        <view class="out_box">
+        <view class="out_box" @click="getShop">
           <view class="box">
             <image
               class="itemTitle"
@@ -125,6 +104,8 @@ export default {
       listLeft: ["123", "456", "789"],
       listUp: ["123", "456", "789"],
       openid: "",
+      navTitle: "项目资讯",
+      letter: "家书专栏",
     };
   },
   onLoad() {
@@ -145,25 +126,28 @@ export default {
     // 项目咨询更多
     scrollMore() {
       uni.navigateTo({
-        url: "/pages/index/projectInfo/index",
+        url: `/pages/index/projectInfo/index?title=${that.navTitle}`,
       });
     },
-    // 拨打电话
-    callUp() {
-      uni.makePhoneCall({
-        phoneNumber: "13914046275",
+    // 积分商城
+    getShop() {
+      uni.navigateTo({
+        url: `/pages/index/inte-shop/index`,
       });
     },
-    // 导航
-    nav() {
-      uni.openLocation({
-        latitude: that.latitude,
-        longitude: that.longitude,
-        name: "爱情云溪九里",
-        address: "常熟市海虞镇人民路与华新路交汇处",
-        scale: 15,
+    //项目推荐
+    projectMore() {
+      uni.switchTab({
+        url: "/pages/project/index",
       });
     },
+    // 家书专栏
+    letterMore() {
+      uni.navigateTo({
+        url: `/pages/index/projectInfo/index?title=${that.letter}`,
+      });
+    },
+
     login() {
       if (!that.openid) {
         uni.login({

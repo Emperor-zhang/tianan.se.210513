@@ -15,7 +15,25 @@
     {
       "path": "pages/index/projectInfo/index",
       "style": {
-        "navigationBarTitleText": "项目咨询"
+        "navigationBarTitleText": "项目资讯"
+      }
+    },
+    {
+      "path": "pages/index/inte-shop/index",
+      "style": {
+        "navigationBarTitleText": "积分商城"
+      }
+    },
+    {
+      "path": "pages/index/inte-shop/goods-detail/index",
+      "style": {
+        "navigationBarTitleText": "商品详情"
+      }
+    },
+    {
+      "path": "pages/index/inte-shop/rule/index",
+      "style": {
+        "navigationBarTitleText": "积分规则"
       }
     },
     {
@@ -28,6 +46,30 @@
       "path": "pages/project/index",
       "style": {
         "navigationBarTitleText": "天安·云境"
+      }
+    },
+    {
+      "path": "pages/project/house-detail/index",
+      "style": {
+        "navigationBarTitleText": "楼盘详情"
+      }
+    },
+    {
+      "path": "pages/project/projectAlbum/index",
+      "style": {
+        "navigationBarTitleText": "项目相册"
+      }
+    },
+    {
+      "path": "pages/project/salesConsultant/index",
+      "style": {
+        "navigationBarTitleText": "销售顾问"
+      }
+    },
+    {
+      "path": "pages/project/pactHouse/index",
+      "style": {
+        "navigationBarTitleText": "预约看房"
       }
     },
     {

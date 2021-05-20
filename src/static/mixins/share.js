@@ -2,10 +2,9 @@ export const shareMixins = {
   data() {
     return {
       shareData: {
-        title: "爱情云溪九里",
+        title: "天安·云境",
         path: "/pages/index/index",
-        imageUrl:
-          "https://wb.jaas.ac.cn/SmallExePic/love.se.210301/img/icon.jpg",
+        imageUrl: "https://wb.jaas.ac.cn/SmallExePic/TianAn.SE.210513/img/icon.jpg",
       },
     };
   },

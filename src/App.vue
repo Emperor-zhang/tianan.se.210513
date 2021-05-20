@@ -11,12 +11,11 @@ export default {
   },
   onLaunch: function(e) {
     let that = this;
-    uni.hideTabBar();
+    // uni.hideTabBar();
     // console.log("e", e);
     that.globalData.userid = e.query.UserID;
     uni.setStorageSync("scene", e.scene);
     uni.setStorageSync("userid", parseInt(e.query.UserID));
-    uni.hideTabBar();
     console.log("App Launch");
   },
   onShow: function() {

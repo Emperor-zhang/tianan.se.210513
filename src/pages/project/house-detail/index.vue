@@ -1,27 +1,22 @@
 <template>
   <view class="content">
-    <state-counsel :gettitle="title"></state-counsel>
+    <image :src="$url + 'project/5-1.png'" mode="widthFix"></image>
   </view>
 </template>
 <script>
 var that;
-import stateCounsel from "@/components/state-counsel/index.vue";
 export default {
   data() {
     return {
       $url: this.url,
-      title: "",
     };
   },
-  onLoad(res) {
+  onLoad() {
     that = this; /**自定义组件中要onLoad换成created*/
-    uni.setNavigationBarTitle({
-      title: res.title,
-    });
-    that.title = res.title;
   },
   onShow() {},
-  components: { stateCounsel },
+  components: {},
+
   methods: {},
 };
 </script>
