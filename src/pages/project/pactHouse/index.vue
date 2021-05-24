@@ -1,11 +1,6 @@
 <template>
   <view class="content">
     <image :src="$url + 'project/8-1.png'" mode="widthFix"></image>
-    <image
-      class="animate1 name"
-      :src="$url + 'project/tubiao-47.png'"
-      mode="widthFix"
-    ></image>
     <input
       type="text"
       :value="name"
@@ -15,27 +10,18 @@
       placeholder-style="color:#c5c5c5"
     />
     <image
-      class="animate1 sex"
-      :src="$url + '/yunxi/tubiao-48.png'"
-      mode="widthFix"
-    ></image>
-    <image
       class="animate1 handleBoy"
-      :src="`${$url}/yunxi/${boy ? 'tubiao-31' : 'tubiao-29'}.png`"
+      :src="`${$url}project/${boy ? '8-5' : '8-2'}.png`"
       mode="widthFix"
       @click="handleBoy"
     ></image>
     <image
       class="animate1 handleGirl"
-      :src="`${$url}/yunxi/${girl ? 'tubiao-32' : 'tubiao-30'}.png`"
+      :src="`${$url}project/${girl ? '8-6' : '8-3'}.png`"
       mode="widthFix"
       @click="handleGirl"
     ></image>
-    <image
-      class="animate1 tel"
-      :src="$url + '/yunxi/tubiao-49.png'"
-      mode="widthFix"
-    ></image>
+
     <input
       type="number"
       :value="tel"
@@ -44,8 +30,6 @@
       placeholder="请输入11位数字"
       placeholder-style="color:#c5c5c5"
     />
-    <text class="pactTime">预约日期</text>
-
     <view class="dateTime" v-if="isShow">
       <view class="year alldate">
         <text>年</text>
@@ -90,7 +74,7 @@
 
     <image
       class="animate1 submit"
-      :src="$url + '/yunxi/tubiao-33.png'"
+      :src="$url + 'project/8-4.png'"
       mode="widthFix"
       @click="submitInfo"
     ></image>
@@ -99,7 +83,6 @@
 <script>
 var that;
 //https://ext.dcloud.net.cn/plugin?id=3962  插件地址
-import DateTimePicker from "@/components/bory-dateTimePicker/bory-dateTimePicker.vue";
 import hTimePicker from "@/components/h-timePicker/h-timePicker.vue";
 import { getResquest } from "@/utils/api.js";
 import { shareMixins } from "@/static/mixins/share.js";
@@ -143,7 +126,7 @@ export default {
     that.openid = uni.getStorageSync("openid");
   },
   onShow() {},
-  components: { DateTimePicker, hTimePicker },
+  components: { hTimePicker },
   methods: {
     changeTime(time, s, obj) {
       that.dateValue = time;
@@ -287,37 +270,22 @@ export default {
   width: 100%;
   height: 100%;
   background-color: #f8f8f8;
-  .name {
-    width: 600rpx;
-    left: 75rpx;
-    top: 19%;
-  }
   .nameInput {
     position: absolute;
-    width: 500rpx;
-    left: 175rpx;
-    top: 19%;
+    width: 400rpx;
+    left: 210rpx;
+    top: 21.6%;
     height: 62rpx;
     font-size: 26rpx;
     color: #777;
     text-align: right;
     padding: 0 10rpx;
   }
-  .sex {
-    width: 600rpx;
-    left: 75rpx;
-    top: 26%;
-  }
-  .tel {
-    width: 600rpx;
-    left: 75rpx;
-    top: 33%;
-  }
   .telInput {
     position: absolute;
-    width: 500rpx;
-    left: 175rpx;
-    top: 33%;
+    width: 400rpx;
+    left: 210rpx;
+    top: 38.5%;
     height: 62rpx;
     font-size: 26rpx;
     color: #777;
@@ -325,28 +293,20 @@ export default {
     padding: 0 10rpx;
   }
   .handleBoy {
-    width: 60rpx;
-    top: 26.6%;
-    left: 500rpx;
+    width: 50rpx;
+    top: 30%;
+    left: 460rpx;
   }
   .handleGirl {
-    width: 60rpx;
-    top: 26.6%;
-    left: 600rpx;
-  }
-  .pactTime {
-    position: absolute;
-    font-size: 28rpx;
-    top: 40%;
-    left: 86rpx;
-    color: #777;
+    width: 50rpx;
+    top: 30%;
+    left: 550rpx;
   }
   #date {
     position: absolute;
-    top: 47%;
-    width: 600rpx;
+    height: 76rpx;
     left: 75rpx;
-    height: 100rpx;
+    top: 54%;
     display: flex;
     align-items: center;
     .dateSel {
@@ -355,38 +315,26 @@ export default {
     }
     .changeTime {
       width: 600rpx;
-      height: 100rpx;
+      height: 76rpx;
       display: flex;
       align-items: center;
     }
   }
-  .cell {
-    position: absolute;
-    top: 47%;
-    width: 600rpx;
-    left: 75rpx;
-    z-index: 2;
-    .cell-detail {
-      height: 100rpx;
-    }
-  }
   .dateTime {
     position: absolute;
-    width: 600rpx;
-    height: 100rpx;
-    left: 75rpx;
-    top: 47%;
+    width: 500rpx;
+    height: 112rpx;
+    left: 125rpx;
+    top: 50.6%;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     font-size: 32rpx;
     color: #777;
     padding: 6rpx 0;
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
     animation: fadeIn 0.5s linear both;
     .time {
-      text-shadow: 1px 1px 2px #eb5405;
+      text-shadow: 1px 1px 2px #adb58c;
     }
     .alldate {
       width: 100rpx;
@@ -399,16 +347,14 @@ export default {
   }
   .dateImg {
     position: absolute;
-    width: 600rpx;
-    height: 100rpx;
-    left: 75rpx;
-    top: 47%;
+    width: 500rpx;
+    height: 76rpx;
+    left: 125rpx;
+    top: 54%;
     display: flex;
     align-items: center;
     justify-content: space-between;
     color: #777;
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
     text {
       width: 100rpx;
       text-align: center;
@@ -416,9 +362,9 @@ export default {
   }
   .submit {
     position: absolute;
-    width: 200rpx;
-    top: 61%;
-    left: 275rpx;
+    width: 300rpx;
+    top: 66%;
+    left: 225rpx;
     animation: bounceInUp 1.3s linear both, icon 1.5s linear 1.3s infinite;
   }
 }

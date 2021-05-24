@@ -176,7 +176,7 @@ page {
 }
 .swiperMain {
   position: absolute;
-  top: 23%;
+  top: 320rpx;
   left: 54rpx;
   width: 642rpx;
 }

@@ -1,8 +1,8 @@
 <template>
   <view class="content">
-    <image :src="$url + 'index/11-1.png'" mode="widthFix"></image>
+    <image :src="$url + 'shop/11-1.png'" mode="widthFix"></image>
     <image
-      :src="$url + 'index/11-2.png'"
+      :src="$url + 'shop/11-2.png'"
       mode="scaleToFill"
       class="animate1 imgBox"
     ></image>
@@ -11,7 +11,7 @@
     <view class="addr">领奖地址</view>
     <view class="tel">领取电话</view>
     <image
-      :src="$url + 'index/11-3.png'"
+      :src="$url + 'shop/11-3.png'"
       mode="widthFix"
       class="animate1 btn1"
     ></image>

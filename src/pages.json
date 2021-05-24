@@ -18,24 +18,7 @@
         "navigationBarTitleText": "项目资讯"
       }
     },
-    {
-      "path": "pages/index/inte-shop/index",
-      "style": {
-        "navigationBarTitleText": "积分商城"
-      }
-    },
-    {
-      "path": "pages/index/inte-shop/goods-detail/index",
-      "style": {
-        "navigationBarTitleText": "商品详情"
-      }
-    },
-    {
-      "path": "pages/index/inte-shop/rule/index",
-      "style": {
-        "navigationBarTitleText": "积分规则"
-      }
-    },
+
     {
       "path": "pages/login/index",
       "style": {
@@ -67,9 +50,21 @@
       }
     },
     {
+      "path": "pages/project/createNotice/index",
+      "style": {
+        "navigationBarTitleText": "名片"
+      }
+    },
+    {
       "path": "pages/project/pactHouse/index",
       "style": {
         "navigationBarTitleText": "预约看房"
+      }
+    },
+    {
+      "path": "pages/project/counselorCard/index",
+      "style": {
+        "navigationBarTitleText": "销售名片"
       }
     },
     {
@@ -79,9 +74,63 @@
       }
     },
     {
+      "path": "pages/shop/goods-detail/index",
+      "style": {
+        "navigationBarTitleText": "商品详情"
+      }
+    },
+    {
+      "path": "pages/shop/rule/index",
+      "style": {
+        "navigationBarTitleText": "积分规则"
+      }
+    },
+    {
       "path": "pages/mine/index",
       "style": {
         "navigationBarTitleText": "我的"
+      }
+    },
+    {
+      "path": "pages/mine/my-info/index",
+      "style": {
+        "navigationBarTitleText": "我的信息"
+      }
+    },
+    {
+      "path": "pages/mine/my-integral/index",
+      "style": {
+        "navigationBarTitleText": "我的积分"
+      }
+    },
+    {
+      "path": "pages/mine/my-activite/index",
+      "style": {
+        "navigationBarTitleText": "我的活动"
+      }
+    },
+    {
+      "path": "pages/mine/my-activite/detailInfo/index",
+      "style": {
+        "navigationBarTitleText": "活动详情"
+      }
+    },
+    {
+      "path": "pages/mine/my-gift/index",
+      "style": {
+        "navigationBarTitleText": "我的礼品"
+      }
+    },
+    {
+      "path": "pages/mine/my-order/index",
+      "style": {
+        "navigationBarTitleText": "我的预约"
+      }
+    },
+    {
+      "path": "pages/mine/my-collect/index",
+      "style": {
+        "navigationBarTitleText": "我的收藏"
       }
     }
   ],
@@ -119,13 +168,16 @@
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "uni-app",
-    "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8"
+    "navigationBarBackgroundColor": "#62b2af",
+    "backgroundColor": "#F8F8F8",
+    "usingComponents": {
+      "painter": "/static/painter/painter"
+    }
   },
   "easycom": {
     "autoscan": true,
     "custom": {
-      "van-(.*)": "@/wxcomponents/vant-weapp/$1/index"
+      "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
     }
   }
 }

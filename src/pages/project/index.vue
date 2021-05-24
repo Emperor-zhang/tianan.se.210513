@@ -290,9 +290,11 @@ export default {
       }).then((res) => {
         if (res.data[0].Opt == 1) {
           that.meetState = 1;
+          uni.setStorageSync("meetState", 1);
           //你已提交 预约看房的 信息，请到“我的”页面“我的预约”中查看，或等待销售人员联系
         } else if (res.data[0].Opt == 2) {
           that.meetState = 2;
+          uni.setStorageSync("meetState", 2);
           //可以进入预约界面
         }
         that.GetSimpleInfo();
@@ -387,7 +389,7 @@ export default {
       console.log(id);
       uni.navigateTo({
         url:
-          "/pages/project/salesConsultant/index?UserID=" +
+          "/pages/project/counselorCard/index?UserID=" +
           id +
           "&meetstate=" +
           that.meetState,
