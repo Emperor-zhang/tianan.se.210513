@@ -1,28 +1,58 @@
 <template>
-  <view class="content"></view>
+  <view class="content">
+    <scroll-view scroll-y class="listBox" :style="'height:' + height + 'px'">
+      <block v-for="(item, index) in 20" :key="index">
+        <view class="item" @click="handleItem">稿件标题</view>
+      </block>
+    </scroll-view>
+  </view>
 </template>
 <script>
 var that;
 export default {
   data() {
-    return { num: "" };
+    return {
+      $url: this.url,
+      list: [],
+      height: 0,
+    };
   },
   onLoad() {
     that = this; /**自定义组件中要onLoad换成created*/
+    that.height = uni.getSystemInfoSync().windowHeight * 0.9;
   },
   onShow() {},
   components: {},
-  watch: {
-    num: function(newValue, oldValue) {
-      /**实时监听数据的变化，也可以兼容听方法名（api->watch） */
-    },
+  methods: {
+    handleItem() {},
   },
-  methods: {},
 };
 </script>
 <style lang="scss" scoped>
 .content {
   position: relative;
   width: 100%;
+  .listBox {
+    position: absolute;
+    width: 656rpx;
+    left: 52rpx;
+    top: 50rpx;
+    height: 80%;
+    .item {
+      width: 100%;
+      height: 90rpx;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      font-size: 30rpx;
+      color: #566369;
+      border-bottom: 1px solid #ccc;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+    }
+  }
 }
 </style>

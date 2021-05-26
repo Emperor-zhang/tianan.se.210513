@@ -110,7 +110,7 @@ export default {
   },
   onLoad() {
     that = this;
-    that.openid = uni.getStorageSync("openid");
+    // that.openid = uni.getStorageSync("openid");
     // that.HomeMsg();
     // that.login();
     uni.showTabBar();

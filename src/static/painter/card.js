@@ -4,7 +4,7 @@ export default class LastMayday {
       "width": "1500px",
       "height": "2768px",
       "background": "#fff",
-      "views": [{
+      views: [{
           "type": "image",
           "url": "https://wb.jaas.ac.cn/SmallExePic/TianAn.SE.210513/img/project/21-1.png",
           "css": {

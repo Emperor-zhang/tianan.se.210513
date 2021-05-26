@@ -156,28 +156,36 @@ export default {
             animationDuration: 200,
           });
         }
-      }, 8000);
+      }, 80000);
     },
     onImgOK(e) {
-      console.log(e);
+      console.log("e", e);
       clearTimeout(timer);
       that.back = 0;
-      uni.downloadFile({
-        url: e.detail.path,
-        success: (res) => {
-          console.log(res);
-          that.imagePath = res.tempFilePath;
-          uni.setStorageSync("imagePath", that.imagePath);
-          uni.hideLoading();
-          that.saveImage();
-          that.flag = true;
-        },
-        fail: (err) => {
-          console.log(err);
-          that.flag = true;
-          uni.hideLoading();
-        },
-      });
+      that.imagePath = e.detail.path;
+      if (that.imagePath.substring(0, 4) == "wxfi") {
+        uni.setStorageSync("imagePath", that.imagePath);
+        uni.hideLoading();
+        that.saveImage();
+        that.flag = true;
+      } else if (that.imagePath.substring(0, 4) == "http") {
+        uni.downloadFile({
+          url: e.detail.path,
+          success: (res) => {
+            console.log(res);
+            that.imagePath = res.tempFilePath;
+            uni.setStorageSync("imagePath", that.imagePath);
+            uni.hideLoading();
+            that.saveImage();
+            that.flag = true;
+          },
+          fail: (err) => {
+            console.log(err);
+            that.flag = true;
+            uni.hideLoading();
+          },
+        });
+      }
     },
     imgErr(e) {
       uni.hideLoading();
@@ -300,7 +308,6 @@ export default {
 .content {
   position: relative;
   width: 100%;
-  height: 100%;
   background-color: #f8f8f8;
   .imgUrl {
     position: absolute;
@@ -319,38 +326,38 @@ export default {
     position: absolute;
     font-size: 28rpx;
     color: #777;
-    top: 35.6%;
+    top: 37%;
     left: 150rpx;
   }
   .addr {
     position: absolute;
     font-size: 28rpx;
     color: #777;
-    top: 40.9%;
+    top: 42.5%;
     left: 150rpx;
   }
   .qrCode {
     position: absolute;
-    width: 146px;
+    width: 292rpx;
     left: 50%;
-    margin-left: -73px;
+    margin-left: -146rpx;
     top: 57%;
   }
   .qrcodeimg {
     position: absolute;
-    width: 134px;
-    height: 134px;
+    width: 268rpx;
+    height: 268rpx;
     left: 50%;
-    margin-left: -70px;
+    margin-left: -138rpx;
     border-radius: 10px;
   }
   .getQrCode {
     position: absolute;
-    width: 134px;
-    height: 134px;
-    top: 54.6%;
+    width: 268rpx;
+    height: 268rpx;
+    top: 788rpx;
     left: 50%;
-    margin-left: -66px;
+    margin-left: -134rpx;
     border-radius: 20rpx;
   }
   .saveCode {

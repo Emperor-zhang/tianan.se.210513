@@ -1,5 +1,5 @@
 <template>
-  <view class="content">
+  <view class="content" @touchmove.stop.prevent="moveHandle">
     <image
       :src="$url + 'mine/15-1.png'"
       mode="widthFix"
@@ -14,7 +14,12 @@
       >
       </uni-search-bar>
     </view>
-    <scroll-view class="listBox" scroll-y v-if="list.length != 0">
+    <scroll-view
+      class="listBox"
+      scroll-y
+      v-if="list.length != 0"
+      :style="'height:' + height + 'rpx'"
+    >
       <block v-for="(item, index) in val == '' ? list : newList" :key="index">
         <view class="itemBox">
           <view class="item-top">
@@ -34,6 +39,7 @@
 </template>
 <script>
 var that;
+// var getRpx = require("../../utils/utils.js");
 export default {
   data() {
     return {
@@ -41,6 +47,7 @@ export default {
       placeholder: "标题搜索",
       radius: "50",
       bgColor: "#fff",
+      height: "",
       val: "",
       list: [
         { title: "1", inte: "10", time: "2021-05-21" },
@@ -58,6 +65,7 @@ export default {
   },
   onLoad() {
     that = this; /**自定义组件中要onLoad换成created*/
+    // that.height = getRpx.getRpx() * uni.getSystemInfoSync().windowHeight - 380;
   },
   onShow() {},
   components: {},

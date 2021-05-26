@@ -19,9 +19,9 @@ export let instance = axios.create({
 // 请求拦截
 // 所有的请求都会先走这个方法
 instance.interceptors.request.use(
-  function(config) {
+  function (config) {
     // debugger;
-    config.url = config.baseURL + config.url;
+    // config.url = config.baseURL + config.url;
     // console.group("全局请求拦截");
     // console.log(config);
     // console.groupEnd();
@@ -30,57 +30,44 @@ instance.interceptors.request.use(
     });
     return config;
   },
-  function(err) {
+  function (err) {
     return Promise.reject(err);
   }
 );
 // 响应拦截
 // 所有的网络请求返回数据之后都会走这个方法
 instance.interceptors.response.use(
-  function(response) {
+  function (response) {
     // console.group("全局响应拦截");
     // console.log(response);
     // console.groupEnd();
     uni.hideLoading();
     return response;
   },
-  function(err) {
+  function (err) {
     return Promise.reject(err);
   }
 );
 
 //真机获取
-axios.defaults.adapter = function(config) {
+axios.defaults.adapter = function (config) {
   return new Promise((resolve, reject) => {
     var settle = require("axios/lib/core/settle");
-
     var buildURL = require("axios/lib/helpers/buildURL");
-
     uni.request({
       method: config.method.toUpperCase(),
-
-      url: buildURL(config.url, config.params, config.paramsSerializer),
-
+      url: buildURL(config.baseURL + config.url, config.params, config.paramsSerializer),
       header: config.headers,
-
       data: config.data,
-
       dataType: config.dataType,
-
       responseType: config.responseType,
-
       sslVerify: config.sslVerify,
-
       complete: function complete(response) {
         response = {
           data: response.data,
-
           status: response.statusCode,
-
           errMsg: response.errMsg,
-
           header: response.header,
-
           config: config,
         };
 

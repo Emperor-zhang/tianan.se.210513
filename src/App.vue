@@ -13,9 +13,9 @@ export default {
     let that = this;
     // uni.hideTabBar();
     // console.log("e", e);
-    that.globalData.userid = e.query.UserID;
-    uni.setStorageSync("scene", e.scene);
-    uni.setStorageSync("userid", parseInt(e.query.UserID));
+    // that.globalData.userid = e.query.UserID;
+    // uni.setStorageSync("scene", e.scene);
+    // uni.setStorageSync("userid", parseInt(e.query.UserID));
     console.log("App Launch");
   },
   onShow: function() {

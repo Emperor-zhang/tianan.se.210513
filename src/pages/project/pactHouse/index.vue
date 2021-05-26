@@ -1,5 +1,5 @@
 <template>
-  <view class="content">
+  <view class="content" @touchmove.stop.prevent="moveHandle">
     <image :src="$url + 'project/8-1.png'" mode="widthFix"></image>
     <input
       type="text"
@@ -128,6 +128,7 @@ export default {
   onShow() {},
   components: { hTimePicker },
   methods: {
+    moveHandle() {},
     changeTime(time, s, obj) {
       that.dateValue = time;
       console.log(obj);
@@ -268,13 +269,12 @@ export default {
 .content {
   position: relative;
   width: 100%;
-  height: 100%;
   background-color: #f8f8f8;
   .nameInput {
     position: absolute;
     width: 400rpx;
     left: 210rpx;
-    top: 21.6%;
+    top: 22.4%;
     height: 62rpx;
     font-size: 26rpx;
     color: #777;
@@ -285,7 +285,7 @@ export default {
     position: absolute;
     width: 400rpx;
     left: 210rpx;
-    top: 38.5%;
+    top: 40.3%;
     height: 62rpx;
     font-size: 26rpx;
     color: #777;
@@ -294,19 +294,19 @@ export default {
   }
   .handleBoy {
     width: 50rpx;
-    top: 30%;
+    top: 32%;
     left: 460rpx;
   }
   .handleGirl {
     width: 50rpx;
-    top: 30%;
+    top: 32%;
     left: 550rpx;
   }
   #date {
     position: absolute;
     height: 76rpx;
     left: 75rpx;
-    top: 54%;
+    top: 56.4%;
     display: flex;
     align-items: center;
     .dateSel {
@@ -325,7 +325,7 @@ export default {
     width: 500rpx;
     height: 112rpx;
     left: 125rpx;
-    top: 50.6%;
+    top: 53%;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -350,7 +350,7 @@ export default {
     width: 500rpx;
     height: 76rpx;
     left: 125rpx;
-    top: 54%;
+    top: 56.4%;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -362,9 +362,9 @@ export default {
   }
   .submit {
     position: absolute;
-    width: 300rpx;
-    top: 66%;
-    left: 225rpx;
+    width: 250rpx;
+    top: 68%;
+    left: 250rpx;
     animation: bounceInUp 1.3s linear both, icon 1.5s linear 1.3s infinite;
   }
 }

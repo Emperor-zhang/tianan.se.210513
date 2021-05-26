@@ -1,8 +1,8 @@
 <template>
-  <view class="content">
+  <view class="content" @touchmove.stop.prevent="moveHandle">
     <image :src="$url + 'index/3-1.png'" mode="widthFix"></image>
     <view class="showTitle">{{ gettitle }}</view>
-    <scroll-view scroll-y class="list-box">
+    <scroll-view scroll-y class="list-box" :style="'height:' + height + 'rpx'">
       <block v-for="(item, index) in 10" :key="index">
         <view class="item-box">
           <view class="title">收藏标题</view>
@@ -22,16 +22,19 @@
 </template>
 <script>
 var that;
+var getRpx = require("../../utils/utils.js");
 export default {
   data() {
     return {
       $url: this.url,
       flag: 1,
+      height: "",
     };
   },
   props: ["gettitle"],
   created(e) {
     that = this; /**自定义组件中要onLoad换成created*/
+    that.height = getRpx.getRpx() * uni.getSystemInfoSync().windowHeight - 380;
   },
   components: {},
   methods: {
@@ -43,6 +46,7 @@ export default {
         that.flag = 1;
       }
     },
+    moveHandle() {},
   },
 };
 </script>
@@ -66,8 +70,7 @@ export default {
     position: absolute;
     width: 620rpx;
     left: 65rpx;
-    height: 830rpx;
-    top: 23%;
+    top: 320rpx;
     .item-box {
       width: 100%;
       height: 100rpx;

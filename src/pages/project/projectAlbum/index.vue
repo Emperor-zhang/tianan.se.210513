@@ -1,5 +1,5 @@
 <template>
-  <view class="content">
+  <view class="content" @touchmove.stop.prevent="moveHandle">
     <image :src="$url + 'project/6-1.png'" mode="widthFix"></image>
     <view class="swiperMain">
       <view class="swiperHead">
@@ -101,6 +101,7 @@ export default {
   onShow() {},
   components: { swiperNavBar },
   methods: {
+    moveHandle() {},
     //tab点击事件 自行完善需要的代码
     CurrentTab: function(index, item) {
       if (index == 0) {
@@ -198,7 +199,6 @@ page {
 }
 .swiperCont {
   width: 100%;
-  padding-top: 70rpx;
 }
 
 /* #ifdef H5 */

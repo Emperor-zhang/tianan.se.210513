@@ -1,20 +1,23 @@
 <template>
-  <view class="content">
+  <view class="content" @touchmove.stop.prevent="moveHandle">
     <image :src="$url + 'shop/10-1.png'" mode="widthFix"></image>
     <image
-      :src="$url + '/weChat.jpeg'"
-      mode="widthFix"
       class="animate1 nickUrl"
+      :src="`${isLogin ? nickurl : $url + 'white.png'}`"
+      mode="widthFix"
+      @click="handle"
     ></image>
-    <view class="animate1 nickname">微信昵称</view>
-    <view class="animate1 integration">积分</view>
+    <view v-if="isLogin" class="animate1 nickname">{{ nickname }}</view>
+    <view v-if="isLogin" class="animate1 integration">积分</view>
+    <view v-else class="animate1 login" @click="handle">未登录</view>
+
     <image
       :src="$url + 'shop/10-4.png'"
       mode="widthFix"
       class="animate1 rule"
       @click="rule"
     ></image>
-    <scroll-view scroll-y class="listBox">
+    <scroll-view scroll-y class="listBox" :style="'height:' + height + 'rpx'">
       <view class="outbox">
         <block v-for="item in 20" :key="item">
           <view class="itemBox" @click="shopInfo">
@@ -37,23 +40,40 @@
 </template>
 <script>
 var that;
+var getRpx = require("../../utils/utils.js");
 export default {
   data() {
     return {
       $url: this.url,
+      isLogin: false,
+      nickurl: "",
+      nickname: "",
+      height: "",
     };
   },
   onLoad() {
     that = this; /**自定义组件中要onLoad换成created*/
+    that.isLogin = uni.getStorageSync("isLogin");
+    that.height = getRpx.getRpx() * uni.getSystemInfoSync().windowHeight - 340;
   },
-  onShow() {},
+  onShow() {
+    that.isLogin = uni.getStorageSync("isLogin");
+    that.nickurl = uni.getStorageSync("nickurl");
+    that.nickname = uni.getStorageSync("nickname");
+  },
   components: {},
   methods: {
     // 商品详情
     shopInfo() {
-      uni.navigateTo({
-        url: `/pages/shop/goods-detail/index`,
-      });
+      if (!that.isLogin) {
+        uni.navigateTo({
+          url: `/pages/login/index`,
+        });
+      } else {
+        uni.navigateTo({
+          url: `/pages/shop/goods-detail/index`,
+        });
+      }
     },
     // 积分规则
     rule() {
@@ -61,6 +81,14 @@ export default {
         url: `/pages/shop/rule/index`,
       });
     },
+    handle() {
+      if (!that.isLogin) {
+        uni.navigateTo({
+          url: `/pages/login/index`,
+        });
+      }
+    },
+    moveHandle() {},
   },
 };
 </script>
@@ -87,6 +115,13 @@ export default {
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
   }
+  .login {
+    color: #fffeff;
+    width: 300rpx;
+    left: 230rpx;
+    top: 9%;
+    font-size: 28rpx;
+  }
   .integration {
     color: #fffeff;
     width: 150rpx;
@@ -108,9 +143,8 @@ export default {
   .listBox {
     position: absolute;
     width: 666rpx;
-    height: 1000rpx;
     left: 42rpx;
-    top: 23%;
+    top: 320rpx;
     .outbox {
       width: 100%;
       height: 100%;

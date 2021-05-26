@@ -19,6 +19,16 @@
         <view class="clickButton">
           <button class="btnThink" @click="btnThink">再想想</button>
           <button
+            v-if="canUseGetUserProfile"
+            class="btn"
+            hover-class="none"
+            type="primary"
+            @tap="bindGetUserInfo"
+          >
+            授权登录
+          </button>
+          <button
+            v-else
             class="btn"
             open-type="getUserInfo"
             type="primary"
@@ -44,11 +54,14 @@ export default {
       nickurl: "",
       nickname: "",
       openid: "",
-      power: 0,
+      canUseGetUserProfile: false,
     };
   },
   onLoad(options) {
     that = this;
+    if (uni.getUserProfile) {
+      that.canUseGetUserProfile = true;
+    }
   },
   onShow() {
     that.openid = uni.getStorageSync("openid");
@@ -75,28 +88,61 @@ export default {
       });
     },
     // 授权
-    bindGetUserInfo(e) {
-      let that = this;
-      console.log(e.detail.userInfo);
-      if (e.detail.errMsg == "getUserInfo:ok") {
-        uni.setStorageSync("power", 1);
-        app.globalData.power = 1;
-        that.nickname = e.detail.userInfo.nickName;
-        that.nickurl = e.detail.userInfo.avatarUrl;
-        uni.setStorageSync("nickname", e.detail.userInfo.nickName);
-        uni.setStorageSync("nickurl", e.detail.userInfo.avatarUrl);
-        uni.navigateBack({
-          delta: 1,
-        });
-        // that.SaveNickName();
-      } else {
-        //点击了拒绝
-      }
-    },
+    // bindGetUserInfo(e) {
+    //   let that = this;
+    //   console.log(e.detail.userInfo);
+    //   if (e.detail.errMsg == "getUserInfo:ok") {
+    //     uni.setStorageSync("power", 1);
+    //     app.globalData.power = 1;
+    //     that.nickname = e.detail.userInfo.nickName;
+    //     that.nickurl = e.detail.userInfo.avatarUrl;
+    //     uni.setStorageSync("nickname", e.detail.userInfo.nickName);
+    //     uni.setStorageSync("nickurl", e.detail.userInfo.avatarUrl);
+    //     uni.navigateBack({
+    //       delta: 1,
+    //     });
+    //   } else {
+    //     //点击了拒绝
+    //   }
+    // },
     btnThink() {
       uni.navigateBack({
         delta: 1,
       });
+    },
+    bindGetUserInfo(e) {
+      //旧版本方式
+      if (this.canUseGetUserProfile == false) {
+        //获取授权信息
+        if (e.detail.userInfo) {
+          console.log("用户允许了授权");
+          console.log(e.detail.userInfo); //1.拿到基本的微信信息!!
+          uni.setStorageSync("nickname", e.detail.userInfo.nickName);
+          uni.setStorageSync("nickurl", e.detail.userInfo.avatarUrl);
+          uni.navigateBack({
+            delta: 1,
+          });
+        }
+        //新版本方式
+      } else {
+        uni.getUserProfile({
+          desc: "用于完善用户资料",
+          lang: "zh_CN",
+          success: function(res) {
+            console.log(res.userInfo);
+            uni.setStorageSync("isLogin", true);
+            uni.setStorageSync("nickname", res.userInfo.nickName);
+            uni.setStorageSync("nickurl", res.userInfo.avatarUrl);
+            uni.navigateBack({
+              delta: 1,
+            });
+          },
+          fail: function(res) {
+            console.log("wx.getUserProfile=>用户拒绝了授权");
+            console.log(res);
+          },
+        });
+      }
     },
   },
 };
