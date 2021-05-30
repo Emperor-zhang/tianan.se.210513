@@ -2,14 +2,10 @@
   <view class="content">
     <image :src="`${$url}project/9-1.png`" mode="widthFix"></image>
     <!-- <image class="animate1 imgUrl" :src="imgUrl" mode="widthFix"></image> -->
-    <image
-      class="animate1 imgUrl"
-      :src="`${$url}weChat.jpeg`"
-      mode="widthFix"
-    ></image>
-    <text class="name">姓名：张孝义{{ name }}</text>
-    <text class="tel">15251763792{{ tel }}</text>
-    <text class="addr">南京市溧水区秦淮大道288号{{ addr }}</text>
+    <image class="animate1 imgUrl" :src="imgUrl" mode="aspectFill"></image>
+    <text class="name">姓名：{{ name }}</text>
+    <text class="tel">{{ tel }}</text>
+    <text class="addr">{{ addr }}</text>
     <!-- 咨询 -->
     <image
       class="animate1 counsel"
@@ -24,7 +20,6 @@
       mode="widthFix"
       @click="navigation"
     ></image>
-
     <image
       class="animate1 goodHouseMore"
       :src="$url + 'project/9-4.png'"
@@ -81,36 +76,31 @@ export default {
       openid: "",
       latitude: "",
       longitude: "",
-      meetstate: "",
+      meetState: 2,
     };
   },
   onLoad(e) {
     that = this; /**自定义组件中要onLoad换成created*/
     that.openid = uni.getStorageSync("openid") || app.globalData.openid;
-    // that.meetstate = e.meetstate;
-    that.meetstate = uni.getStorageSync("meetState");
-    console.log(e);
   },
   onShow() {
     let pages = getCurrentPages();
     let currentPage = pages[pages.length - 1];
-    that.id =
-      currentPage.options.UserID ||
-      app.globalData.userid ||
-      uni.getStorageSync("userid");
-    // that.login();
+    that.id = currentPage.options.AdviserID;
+    that.meetState = uni.getStorageSync("meetState");
+    that.login();
   },
 
   components: {},
   methods: {
     // 预约看房
     order() {
-      if (that.meetstate == 1) {
+      if (that.meetState == 1) {
         uni.showToast({
           title: "您已预约，请到我的预约中查看",
           icon: "none",
         });
-      } else if (that.meetstate == 2) {
+      } else if (that.meetState == 2 || !that.meetState) {
         uni.navigateTo({
           url: "/pages/project/pactHouse/index",
           animationType: "pop-in",
@@ -121,7 +111,7 @@ export default {
     // 生成海报
     create() {
       uni.navigateTo({
-        url: "/pages/project/createNotice/index?id=" + that.id,
+        url: "/pages/project/createNotice/index?AdviserID=" + that.id,
         animationType: "pop-in",
         animationDuration: 200,
       });
@@ -151,25 +141,20 @@ export default {
     // 好房推荐
     goodHouseMore() {
       uni.switchTab({
-        url: `/pages/project/projectAlbum/index`,
-        animationType: "pop-in",
-        animationDuration: 200,
+        url: `/pages/project/index`,
       });
     },
     GetPosterInfo() {
-      getResquest("CommonHelper.ashx?Method=GetPosterInfo", {
-        ProjectCode: "yljx", //项目编号  云溪九里
-        OpenID: that.openid, //换取openid
-        UserID: that.id, //销售人员
+      getResquest("CommonHelper.ashx?Method=GetAdviserInfo", {
+        AdviserID: that.id, //销售人员
       }).then((res) => {
         console.log(res);
-        that.name = res.data[0].Adviser[0].name;
-        that.tel = res.data[0].Adviser[0].phone;
-        that.imgUrl = res.data[0].Adviser[0].imgUrl;
-        that.latitude = res.data[0].Project[0].lat;
-        that.longitude = res.data[0].Project[0].long;
+        that.name = res.data[0].Name;
+        that.tel = res.data[0].Phone;
+        that.imgUrl = res.data[0].ImgUrl;
+        that.addr = res.data[0].Addr;
         that.shareData.path =
-          "/pages/project/counselorCard/index?UserID=" + that.id;
+          "/pages/project/counselorCard/index?AdviserID=" + that.id;
         that.Convert();
       });
     },
@@ -216,6 +201,7 @@ export default {
   .imgUrl {
     position: absolute;
     width: 120rpx;
+    height: 120rpx;
     top: 23%;
     left: 110rpx;
     border-radius: 100rpx;
@@ -224,7 +210,7 @@ export default {
     position: absolute;
     font-size: 30rpx;
     color: #5a6569;
-    top: 27%;
+    top: 26%;
     left: 270rpx;
   }
   .tel {

@@ -22,14 +22,14 @@ export default class LastMayday {
         },
         {
           "type": "image",
-          "url": "https://wb.jaas.ac.cn/Love.SE.210204/LoveWeb/UpLoad/Adviser/1.png",
+          "url": `${obj.imgurl}`,
           "css": {
             "width": "260px",
             "height": "260px",
             "top": "620px",
             "left": "216px",
             "rotate": "0",
-            "borderRadius": "",
+            "borderRadius": "200px",
             "borderWidth": "",
             "borderColor": "#000",
             "shadow": "",
@@ -38,7 +38,7 @@ export default class LastMayday {
         },
         {
           "type": "text",
-          "text": "姓名：" + obj.name + "",
+          "text": "姓名：" + decodeURIComponent(obj.name) + "",
           "css": {
             "color": "#546668",
             "background": "rgba(0,0,0,0)",
@@ -64,7 +64,7 @@ export default class LastMayday {
         },
         {
           "type": "text",
-          "text": "13914046275",
+          "text": `${obj.tel}`,
           "css": {
             "color": "#546668",
             "background": "rgba(0,0,0,0)",
@@ -90,7 +90,7 @@ export default class LastMayday {
         },
         {
           "type": "text",
-          "text": "南京市溧水区秦淮大道288号",
+          "text": `${obj.addr}`,
           "css": {
             "color": "#546668",
             "background": "rgba(0,0,0,0)",
@@ -116,7 +116,7 @@ export default class LastMayday {
         },
         {
           "type": "image",
-          "url": "https://wb.jaas.ac.cn/Love.SE.210204/qr/1.png",
+          "url": `${obj.qCode}`,
           "css": {
             "width": "536px",
             "height": "536px",

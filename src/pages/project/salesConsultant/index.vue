@@ -1,27 +1,31 @@
 <template>
-  <view class="content">
+  <view class="content" @touchmove.stop.prevent="moveHandle">
     <image :src="$url + 'project/7-1.png'" mode="widthFix"></image>
-    <scroll-view class="SalesConsultant" scroll-y="true">
-      <block v-for="item in list" :key="item.adviserID">
-        <view class="box" @click="handleInfo(item.adviserID)">
+    <scroll-view
+      class="SalesConsultant"
+      scroll-y="true"
+      :style="'height:' + height + 'rpx'"
+    >
+      <block v-for="item in list" :key="item.AdviserID">
+        <view class="box" @click="handleInfo(item.AdviserID)">
           <view class="list_item">
             <image
               class="animate1 SalesnickUrl"
-              :src="item.imgUrl"
-              mode="widthFix"
+              :src="item.ImgUrl"
+              mode="aspectFill"
             ></image>
-            <text class="SalesnickName">{{ item.name }}</text>
+            <text class="SalesnickName">{{ item.Name }}</text>
             <image
               class="animate1 setTel"
               :src="$url + 'project/7-2.png'"
               mode="widthFix"
-              @click.stop="callUp(item.phone)"
+              @click.stop="callUp(item.Phone)"
             ></image>
             <image
               class="animate1 setWechat"
               :src="$url + 'project/7-3.png'"
               mode="widthFix"
-              @click.stop="addWechat(item.weixin)"
+              @click.stop="addWechat(item.WeixinID)"
             ></image>
           </view>
         </view>
@@ -42,6 +46,7 @@ var that;
 import yangrMsg from "@/components/yangr-msg/yangr-msg.vue";
 import { shareMixins } from "@/static/mixins/share.js";
 import { getResquest } from "@/utils/api.js";
+var getRpx = require("@/utils/utils.js");
 export default {
   mixins: [shareMixins],
   data() {
@@ -51,10 +56,12 @@ export default {
       info: "微信号已复制，请到微信中粘贴添加好友",
       list: [],
       yangrMsgShow: false,
+      height: "",
     };
   },
   onLoad() {
     that = this; /**自定义组件中要onLoad换成created*/
+    that.height = getRpx.getRpx() * uni.getSystemInfoSync().windowHeight - 380;
   },
   onShow() {
     that.getSalesInfo();
@@ -64,7 +71,7 @@ export default {
     // 顾问名片------需要带参数
     handleInfo(id) {
       uni.navigateTo({
-        url: "/pages/project/counselorCard/index?UserID=" + id,
+        url: "/pages/project/counselorCard/index?AdviserID=" + id,
         animationType: "pop-in",
         animationDuration: 200,
       });
@@ -96,13 +103,12 @@ export default {
       that.yangrMsgShow = false;
     },
     getSalesInfo() {
-      getResquest("CommonHelper.ashx?Method=GetAdviserInfo", {
-        ProjectCode: "yljx",
-      }).then((res) => {
+      getResquest("CommonHelper.ashx?Method=GetAdviserList", {}).then((res) => {
         console.log(res);
         that.list = res.data;
       });
     },
+    moveHandle() {},
   },
 };
 </script>
@@ -135,6 +141,8 @@ export default {
           width: 100rpx;
           top: 10rpx;
           left: 20rpx;
+          height: 100rpx;
+          border-radius: 200rpx;
         }
         .SalesnickName {
           position: absolute;
@@ -147,14 +155,14 @@ export default {
           width: 130rpx;
         }
         .setTel {
-          width: 120rpx;
+          width: 100rpx;
           left: 300rpx;
-          top: 34rpx;
+          top: 44rpx;
         }
         .setWechat {
-          width: 120rpx;
+          width: 100rpx;
           left: 440rpx;
-          top: 34rpx;
+          top: 44rpx;
         }
       }
     }

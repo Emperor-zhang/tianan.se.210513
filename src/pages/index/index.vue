@@ -24,7 +24,7 @@
     ></image>
     <!-- 热门活动 -->
     <view class="hotEvent">
-      <block v-for="(item, index) in 3" :key="index">
+      <block v-for="(item, index) in activity" :key="index">
         <view class="eventop">
           <image
             class="hotTitle"
@@ -36,22 +36,28 @@
     </view>
     <!-- 积分商城 -->
     <view class="shop">
-      <block v-for="(item, index) in 2" :key="index">
-        <view class="out_box" @click="getShop">
+      <block v-for="item in goodsList" :key="item.GoodsID">
+        <view class="out_box" @click="GetGoodsInfo(item.GoodsID)">
           <view class="box">
             <image
               class="itemTitle"
-              :src="$url + 'index/1-7.png'"
+              :src="item.GoodsUrl"
               mode="scaleToFill"
             ></image>
             <view class="text_box">
-              <view class="gift_name">礼品名称</view>
-              <view class="total">积分:</view>
+              <view class="gift_name">{{ item.GoodsName }}</view>
+              <view class="total">积分:{{ item.Integral }}</view>
             </view>
           </view>
         </view>
       </block>
     </view>
+    <image
+      class="inte-shop"
+      :src="$url + 'index/1-5.png'"
+      mode="widthFix"
+      @click="inteShopMore"
+    ></image>
     <!-- 项目推荐 -->
     <view class="project">
       <image
@@ -101,8 +107,11 @@ export default {
       interval: 3000,
       duration: 1000,
       circular: true,
+      userid: 0,
       listLeft: ["123", "456", "789"],
       listUp: ["123", "456", "789"],
+      activity: [],
+      goodsList: [],
       openid: "",
       navTitle: "项目资讯",
       letter: "家书专栏",
@@ -110,10 +119,8 @@ export default {
   },
   onLoad() {
     that = this;
-    // that.openid = uni.getStorageSync("openid");
-    // that.HomeMsg();
-    // that.login();
-    uni.showTabBar();
+    that.openid = uni.getStorageSync("openid");
+    that.login();
   },
   onShow() {},
   methods: {
@@ -126,25 +133,32 @@ export default {
     // 项目咨询更多
     scrollMore() {
       uni.navigateTo({
-        url: `/pages/index/projectInfo/index?title=${that.navTitle}`,
+        url: `/pages/index/projectInfo/index?title=${that.navTitle}&num=1`,
       });
     },
-    // 积分商城
-    getShop() {
-      uni.navigateTo({
-        url: `/pages/index/inte-shop/index`,
-      });
-    },
+
     //项目推荐
     projectMore() {
       uni.switchTab({
         url: "/pages/project/index",
       });
     },
+    // 积分商城
+    GetGoodsInfo(goodsid) {
+      uni.navigateTo({
+        url: `/pages/shop/goods-detail/index?goodsid=${goodsid}`,
+      });
+    },
+    // 积分商城更多
+    inteShopMore() {
+      uni.switchTab({
+        url: "/pages/shop/index",
+      });
+    },
     // 家书专栏
     letterMore() {
       uni.navigateTo({
-        url: `/pages/index/projectInfo/index?title=${that.letter}`,
+        url: `/pages/index/projectInfo/index?title=${that.letter}&num=2`,
       });
     },
 
@@ -159,38 +173,48 @@ export default {
             }).then((res) => {
               console.log(res);
               uni.setStorageSync("openid", res.data[0].OpenID);
+              uni.setStorageSync("userid", res.data[0].UserID);
               app.globalData.openid = res.data[0].OpenID;
               that.openid = res.data[0].OpenID;
-              that.HomeMsg();
-              that.HomeHead();
-
-              // that.Check();
+              that.userid = res.data[0].UserID;
+              that.GetMultiList();
+              that.GetSimpleInfo();
             });
           },
         });
       } else {
-        that.HomeMsg();
-        that.HomeHead();
-        // that.Check();
+        that.GetMultiList();
+        that.GetSimpleInfo();
       }
     },
-    HomeMsg() {
-      getResquest("CommonHelper.ashx?Method=HomeMsg&MsgType=all", {}).then(
-        (res) => {
-          // console.log(res);
-          that.lists = res.data[0].BrandMenu.map((result) => {
-            return result.Them;
-          });
-          that.BookMenu = res.data[0].BookMenu;
-        }
-      );
-    },
-    HomeHead() {
-      getResquest("CommonHelper.ashx?Method=HomeHead", {}).then((res) => {
-        // console.log(res);
-        that.head = res.data[0].Head;
-        that.Activity = res.data[0].Activity;
+    // 滚动资讯接口
+    GetMultiList() {
+      getResquest("CommonHelper.ashx?Method=GetMultiList", {
+        OpenID: that.openid, //收藏时需要
+        MsgType: "all", //all 四种稿件的最近前3个；1 项目资讯; 2 家书专栏，3 实时资讯； 4 销售资讯
+      }).then((res) => {
+        // AdviserMenu //销售咨询
+        // BookMenu //家书专栏
+        // BrandMenu //项目咨询
+        // NewsMenu  //实时资讯
+        console.log(res);
+        that.listLeft = res.data[0].BrandMenu.map((result) => {
+          return result.Them;
+        });
+        that.listUp = res.data[0].BookMenu.map((result) => {
+          return result.Them;
+        });
         uni.showTabBar();
+      });
+    },
+    // 热门活动接口
+    GetSimpleInfo() {
+      getResquest("CommonHelper.ashx?Method=GetSimpleInfo", {
+        PageIndex: 1, //1 表示首页的前三活动首页积分商城；2 表示项目信息页的 楼盘相册前二或置业顾问前二
+      }).then((res) => {
+        console.log(res);
+        that.goodsList = res.data[0].Goods;
+        // that.activity = res.data.Activity;
       });
     },
   },
@@ -293,6 +317,7 @@ export default {
         image {
           width: 100%;
           height: 280rpx;
+          border-radius: 20rpx 20rpx 0 0;
         }
         .text_box {
           display: flex;
@@ -337,6 +362,12 @@ export default {
     position: absolute;
     width: 120rpx;
     top: 78%;
+    right: 52rpx;
+  }
+  .inte-shop {
+    position: absolute;
+    width: 120rpx;
+    top: 60.2%;
     right: 52rpx;
   }
   .letter {

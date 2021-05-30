@@ -138,27 +138,23 @@ export default {
       });
     },
     getAblum() {
-      getResquest("CommonHelper.ashx?Method=GetImgInfo", {
-        ProjectCode: "yljx",
-      }).then((res) => {
+      getResquest("CommonHelper.ashx?Method=GetCameraList", {}).then((res) => {
         console.log(res);
         that.swiperTabList = res.data;
         res.data.forEach((result) => {
           that.swiperTabList.push(result);
         });
-
         console.log(that.swiperTabList);
-
         that.allImg = that.img1 = res.data[0].children.map((result) => {
           return result.imgUrl;
         });
-        that.img2 = res.data[1].children.map((result) => {
+        that.allImg = that.img2 = res.data[1].children.map((result) => {
           return result.imgUrl;
         });
-        that.img3 = res.data[1].children.map((result) => {
+        that.allImg = that.img3 = res.data[1].children.map((result) => {
           return result.imgUrl;
         });
-        that.img4 = res.data[1].children.map((result) => {
+        that.allImg = that.img4 = res.data[1].children.map((result) => {
           return result.imgUrl;
         });
       });

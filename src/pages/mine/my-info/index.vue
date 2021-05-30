@@ -6,45 +6,65 @@
       mode="widthFix"
       class="animate1 img1"
     ></image>
-    <image
-      class="animate1 nickUrl"
-      :src="`${$url}weChat.jpeg`"
-      mode="widthFix"
-    ></image>
+    <image class="animate1 nickUrl" :src="nickurl" mode="widthFix"></image>
     <image
       :src="$url + 'mine/14-3.png'"
       mode="widthFix"
       class="animate1 img2"
     ></image>
-    <text class="nickName">昵称</text>
+    <text class="nickName">{{ nickname }}</text>
     <image
       :src="$url + 'mine/14-4.png'"
       mode="widthFix"
       class="animate1 img3"
     ></image>
-    <text class="sex">男</text>
+    <text class="sex">{{ gender }}</text>
     <image
+      v-if="false"
       :src="$url + 'mine/14-5.png'"
       mode="widthFix"
       class="animate1 img4"
     ></image>
-    <text class="tel">15251763792</text>
+    <text v-if="false" class="tel">{{ tel }}</text>
   </view>
 </template>
 <script>
+import { getResquest } from "@/utils/api.js";
 var that;
 export default {
   data() {
     return {
       $url: this.url,
+      nickname: "",
+      nickurl: "",
+      gender: "",
+      tel: "",
+      openid: "",
     };
   },
   onLoad() {
     that = this; /**自定义组件中要onLoad换成created*/
+    that.openid = uni.getStorageSync("openid");
+    that.$nextTick(function() {
+      that.GetMineInfo();
+    });
   },
   onShow() {},
   components: {},
-  methods: {},
+  methods: {
+    GetMineInfo() {
+      getResquest("CommonHelper.ashx?Method=GetMineInfo", {
+        MineID: 1, //我的：1我的信息，2我的积分，3我的活动，4我的礼品，5 我的预约，6我的收藏
+        OpenID: that.openid,
+      }).then((res) => {
+        console.log(res);
+        that.tel = res.data[0].Phone;
+        that.nickname = res.data[0].NickName;
+        that.nickurl = res.data[0].NickUrl;
+        that.gender = uni.getStorageSync("gender");
+      });
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>

@@ -7,10 +7,10 @@
     ></image>
 
     <scroll-view class="box" scroll-y v-if="list.length != 0">
-      <blobk v-for="(item, index) in 10" :key="index">
+      <blobk v-for="(item, index) in list" :key="index">
         <view class="item">
           <image
-            :src="$url + 'mine/17-2.png'"
+            :src="item.GoodsUrl"
             mode="scaleToFill"
             class="leftImg"
           ></image>
@@ -21,9 +21,9 @@
               class="rightImg"
             ></image>
             <view class="showInfo">
-              <view class="giftName">礼品名称:礼品名称</view>
-              <view class="giftInte">兑换积分:兑换积分</view>
-              <view class="giftState">兑换状态:兑换状态</view>
+              <view class="giftName">礼品名称:{{ item.GoodsName }}</view>
+              <view class="giftInte">兑换积分:{{ item.Integral }}</view>
+              <view class="giftState">兑换状态:{{ item.Flag }}</view>
             </view>
             <view></view>
           </view>
@@ -39,20 +39,34 @@
 </template>
 <script>
 var that;
+import { getResquest } from "@/utils/api.js";
 export default {
   data() {
     return {
       $url: this.url,
       list: [],
+      openid: "",
     };
   },
   onLoad() {
     that = this; /**自定义组件中要onLoad换成created*/
+    that.openid = uni.getStorageSync("openid");
   },
-  onShow() {},
+  onShow() {
+    that.GetMineInfo();
+  },
   components: {},
   methods: {
     moveHandle() {},
+    GetMineInfo() {
+      getResquest("CommonHelper.ashx?Method=GetMineInfo", {
+        MineID: 4, //我的：1我的信息，2我的积分，3我的活动，4我的礼品，5 我的预约，6我的收藏
+        OpenID: that.openid,
+      }).then((res) => {
+        console.log(res);
+        that.list = res.data;
+      });
+    },
   },
 };
 </script>
@@ -62,8 +76,8 @@ export default {
   width: 100%;
   .box {
     position: absolute;
-    width: 600rpx;
-    left: 75rpx;
+    width: 646rpx;
+    left: 52rpx;
     top: 100rpx;
     height: 1000rpx;
     .item {
@@ -79,10 +93,10 @@ export default {
       }
       .showMsg {
         position: relative;
-        width: 400rpx;
+        width: 446rpx;
         height: 100%;
         .rightImg {
-          width: 400rpx;
+          width: 446rpx;
           height: 100%;
         }
         .showInfo {
@@ -98,7 +112,7 @@ export default {
           font-size: 24rpx;
           padding-left: 10rpx;
           .giftName {
-            width: 380rpx;
+            width: 420rpx;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
@@ -106,7 +120,7 @@ export default {
             -webkit-box-orient: vertical;
           }
           .giftInte {
-            width: 380rpx;
+            width: 420rpx;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
@@ -114,7 +128,7 @@ export default {
             -webkit-box-orient: vertical;
           }
           .giftState {
-            width: 380rpx;
+            width: 420rpx;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;

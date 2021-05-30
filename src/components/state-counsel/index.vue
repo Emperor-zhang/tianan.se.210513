@@ -3,15 +3,19 @@
     <image :src="$url + 'index/3-1.png'" mode="widthFix"></image>
     <view class="showTitle">{{ gettitle }}</view>
     <scroll-view scroll-y class="list-box" :style="'height:' + height + 'rpx'">
-      <block v-for="(item, index) in 10" :key="index">
+      <block v-for="item in list" :key="item.MsgID">
         <view class="item-box">
-          <view class="title">收藏标题</view>
-          <view class="collect" @click="collect">
+          <view
+            class="title"
+            @click="handleTitle(item.LinkUrl, item.Them, item.MsgID)"
+            >{{ item.Them }}</view
+          >
+          <view class="collect" @click.stop="collect(item.MsgID)">
             <text class="collect_text">{{
-              flag == 1 ? "收藏" : "已收藏"
+              item.Flag == 0 ? "收藏" : "已收藏"
             }}</text>
             <image
-              :src="`${$url}index/3-${flag == 1 ? '2' : '3'}.png`"
+              :src="`${$url}index/3-0-${item.Flag}.png`"
               mode="widthFix"
             ></image>
           </view>
@@ -22,31 +26,71 @@
 </template>
 <script>
 var that;
+import { getResquest } from "@/utils/api.js";
 var getRpx = require("../../utils/utils.js");
 export default {
   data() {
     return {
       $url: this.url,
-      flag: 1,
       height: "",
+      flag: 0,
+      list: [],
+      openid: "",
     };
   },
-  props: ["gettitle"],
+  props: ["gettitle", "getnum"],
   created(e) {
     that = this; /**自定义组件中要onLoad换成created*/
+    that.openid = uni.getStorageSync("openid");
     that.height = getRpx.getRpx() * uni.getSystemInfoSync().windowHeight - 380;
   },
   components: {},
-  methods: {
-    //   收藏
-    collect() {
-      if (that.flag == 1) {
-        that.flag = 2;
-      } else {
-        that.flag = 1;
-      }
+  watch: {
+    getnum(newVal, oldVal) {
+      newVal & that.GetMultiList();
     },
+  },
+  methods: {
     moveHandle() {},
+    //   收藏/取消收藏
+    collect(id) {
+      getResquest("CommonHelper.ashx?Method=SaveCollection", {
+        OpenID: that.openid,
+        MsgID: id,
+      }).then((res) => {
+        console.log(res);
+        that.GetMultiList();
+      });
+    },
+    GetMultiList() {
+      getResquest("CommonHelper.ashx?Method=GetMultiList", {
+        OpenID: that.openid, //收藏时需要
+        MsgType: that.getnum, //all 四种稿件的最近前3个；1 项目资讯; 2 家书专栏，3 实时资讯； 4 销售资讯
+      }).then((res) => {
+        // AdviserMenu //销售咨询
+        // BookMenu //家书专栏
+        // BrandMenu //项目咨询
+        // NewsMenu  //实时资讯
+        console.log(res);
+        if (that.getnum == 1) {
+          that.list = res.data[0].BrandMenu;
+        } else if (that.getnum == 2) {
+          that.list = res.data[0].BookMenu;
+        } else if (that.getnum == 3) {
+          that.list = res.data[0].NewsMenu;
+        } else if (that.getnum == 4) {
+          that.list = res.data[0].AdviserMenu;
+        }
+        that.$nextTick(function() {
+          that.flag = 1;
+        });
+      });
+    },
+    handleTitle(url, tit, mId) {
+      uni.navigateTo({
+        url: `/pages/webview/index?url=${url}&title=${tit}&msgId=${mId}`,
+      });
+    },
   },
 };
 </script>

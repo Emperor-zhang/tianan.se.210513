@@ -1,30 +1,62 @@
 <template>
-  <view class="content">
-    <scroll-view scroll-y class="listBox" :style="'height:' + height + 'px'">
-      <block v-for="(item, index) in 20" :key="index">
-        <view class="item" @click="handleItem">稿件标题</view>
+  <view class="content" @touchmove.stop.prevent="moveHandle">
+    <scroll-view
+      v-if="list.length != 0"
+      scroll-y
+      class="listBox"
+      :style="'height:' + height + 'px'"
+    >
+      <block v-for="(item, index) in list" :key="index">
+        <view class="item" @click="handleItem(item.LinkUrl, item.Them)">{{
+          item.Them
+        }}</view>
       </block>
     </scroll-view>
+    <image
+      v-if="list.length == 0"
+      :src="$url + 'mine/20-1.png'"
+      mode="widthFix"
+    ></image>
   </view>
 </template>
 <script>
 var that;
+import { getResquest } from "@/utils/api.js";
 export default {
   data() {
     return {
       $url: this.url,
       list: [],
       height: 0,
+      openid: "",
     };
   },
   onLoad() {
     that = this; /**自定义组件中要onLoad换成created*/
     that.height = uni.getSystemInfoSync().windowHeight * 0.9;
+    that.openid = uni.getStorageSync("openid");
+    that.$nextTick(function() {
+      that.GetMineInfo();
+    });
   },
   onShow() {},
   components: {},
   methods: {
-    handleItem() {},
+    handleItem(url, tit) {
+      uni.navigateTo({
+        url: `/pages/webview/index?url=${url}&title=${tit}`,
+      });
+    },
+    moveHandle() {},
+    GetMineInfo() {
+      getResquest("CommonHelper.ashx?Method=GetMineInfo", {
+        MineID: 6, //我的：1我的信息，2我的积分，3我的活动，4我的礼品，5 我的预约，6我的收藏
+        OpenID: that.openid,
+      }).then((res) => {
+        console.log(res);
+        that.list = res.data;
+      });
+    },
   },
 };
 </script>

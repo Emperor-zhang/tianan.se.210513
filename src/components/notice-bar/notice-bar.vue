@@ -67,7 +67,7 @@ export default {
     list: {
       immediate: true,
       handler(val) {
-        this.showText = val.join("，");
+        this.showText = val.join("");
         this.$nextTick(() => {
           this.initSize();
         });

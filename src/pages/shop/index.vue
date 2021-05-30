@@ -8,7 +8,9 @@
       @click="handle"
     ></image>
     <view v-if="isLogin" class="animate1 nickname">{{ nickname }}</view>
-    <view v-if="isLogin" class="animate1 integration">积分</view>
+    <view v-if="isLogin" class="animate1 integration"
+      >积分:{{ integration }}</view
+    >
     <view v-else class="animate1 login" @click="handle">未登录</view>
 
     <image
@@ -19,17 +21,17 @@
     ></image>
     <scroll-view scroll-y class="listBox" :style="'height:' + height + 'rpx'">
       <view class="outbox">
-        <block v-for="item in 20" :key="item">
-          <view class="itemBox" @click="shopInfo">
+        <block v-for="item in list" :key="item.GoodsID">
+          <view class="itemBox" @click="shopInfo(item.GoodsID)">
             <view class="box">
               <image
-                :src="$url + 'shop/10-3.png'"
+                :src="item.GoodsUrl"
                 mode="scaleToFill"
                 class="imgbox"
               ></image>
               <view class="textBox">
-                <view class="txtTop">礼品名称</view>
-                <view class="txtBottom">积分:123456</view>
+                <view class="txtTop">{{ item.GoodsName }}</view>
+                <view class="txtBottom">积分:{{ item.Integral }}</view>
               </view>
             </view>
           </view>
@@ -40,8 +42,11 @@
 </template>
 <script>
 var that;
+import { getResquest } from "@/utils/api.js";
+import { shareMixins } from "@/static/mixins/share.js";
 var getRpx = require("../../utils/utils.js");
 export default {
+  mixins: [shareMixins],
   data() {
     return {
       $url: this.url,
@@ -49,29 +54,34 @@ export default {
       nickurl: "",
       nickname: "",
       height: "",
+      openid: "",
+      list: [],
+      integration: "",
     };
   },
   onLoad() {
     that = this; /**自定义组件中要onLoad换成created*/
     that.isLogin = uni.getStorageSync("isLogin");
     that.height = getRpx.getRpx() * uni.getSystemInfoSync().windowHeight - 340;
+    that.openid = uni.getStorageSync("openid");
   },
   onShow() {
     that.isLogin = uni.getStorageSync("isLogin");
     that.nickurl = uni.getStorageSync("nickurl");
     that.nickname = uni.getStorageSync("nickname");
+    that.GetGoodsList();
   },
   components: {},
   methods: {
     // 商品详情
-    shopInfo() {
+    shopInfo(goodsid) {
       if (!that.isLogin) {
         uni.navigateTo({
           url: `/pages/login/index`,
         });
       } else {
         uni.navigateTo({
-          url: `/pages/shop/goods-detail/index`,
+          url: `/pages/shop/goods-detail/index?goodsid=${goodsid}`,
         });
       }
     },
@@ -89,6 +99,27 @@ export default {
       }
     },
     moveHandle() {},
+    GetGoodsList() {
+      getResquest("CommonHelper.ashx?Method=GetGoodsList", {
+        OpenID: that.openid, //商品编号
+      }).then((res) => {
+        console.log(res);
+        that.list = res.data[0].GoodsList;
+        that.integration = res.data[0].Integral;
+        // tab.NickState; //是否授权头像：0未授权，1已授权
+        // tab.NickName; //昵称
+        // tab.NickUrl; //头像
+        // tab.Integral; //积分
+        // that.nickurl = res.tab.NickUrl
+        // that.nickname = res.tab.NickName
+        // that.integration = res.tab.Integral
+        // entity.GoodsID; //商品编号
+        // entity.GoodsUrl; //商品图片
+        // entity.GoodsName; //商品名称
+        // entity.Integral; //商品所需积分
+        // that.list = res.data;
+      });
+    },
   },
 };
 </script>

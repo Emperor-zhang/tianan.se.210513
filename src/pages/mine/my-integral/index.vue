@@ -23,10 +23,10 @@
       <block v-for="(item, index) in val == '' ? list : newList" :key="index">
         <view class="itemBox">
           <view class="item-top">
-            <view class="title">{{ item.title }}</view>
-            <view class="inte">+{{ item.inte }}分</view>
+            <view class="title">{{ item.ThingName }}</view>
+            <view class="inte">+{{ item.Integral }}分</view>
           </view>
-          <view class="time">{{ item.time }}&nbsp;&nbsp;12:12</view>
+          <view class="time">{{ item.CreateDate }}&nbsp;&nbsp;12:12</view>
         </view>
       </block>
     </scroll-view>
@@ -39,7 +39,8 @@
 </template>
 <script>
 var that;
-// var getRpx = require("../../utils/utils.js");
+var getRpx = require("@/utils/utils.js");
+import { getResquest } from "@/utils/api.js";
 export default {
   data() {
     return {
@@ -49,23 +50,20 @@ export default {
       bgColor: "#fff",
       height: "",
       val: "",
-      list: [
-        { title: "1", inte: "10", time: "2021-05-21" },
-        { title: "12", inte: "10", time: "2021-05-21" },
-        { title: "123", inte: "10", time: "2021-05-21" },
-        { title: "4", inte: "10", time: "2021-05-21" },
-        { title: "15", inte: "10", time: "2021-05-21" },
-        { title: "6", inte: "10", time: "2021-05-21" },
-        { title: "7", inte: "10", time: "2021-05-21" },
-      ],
+      list: [],
       newList: [],
       oldList: [],
       num: 0,
+      openid: "",
     };
   },
   onLoad() {
     that = this; /**自定义组件中要onLoad换成created*/
-    // that.height = getRpx.getRpx() * uni.getSystemInfoSync().windowHeight - 380;
+    that.height = getRpx.getRpx() * uni.getSystemInfoSync().windowHeight - 400;
+    that.openid = uni.getStorageSync("openid");
+    that.$nextTick(function() {
+      that.GetMineInfo();
+    });
   },
   onShow() {},
   components: {},
@@ -77,8 +75,7 @@ export default {
       if (e != "") {
         that.list.map((res) => {
           that.num++;
-          console.log();
-          if (res.title.includes(e) == true) {
+          if (res.ThingName.includes(e) == true) {
             that.newList.push(res);
             that.num = 0;
           } else {
@@ -91,6 +88,16 @@ export default {
         that.newList = [];
       }
     },
+    GetMineInfo() {
+      getResquest("CommonHelper.ashx?Method=GetMineInfo", {
+        MineID: 2, //我的：1我的信息，2我的积分，3我的活动，4我的礼品，5 我的预约，6我的收藏
+        OpenID: that.openid,
+      }).then((res) => {
+        console.log(res);
+        that.list = res.data;
+      });
+    },
+    moveHandle() {},
   },
 };
 </script>
@@ -109,7 +116,7 @@ export default {
     width: 606rpx;
     height: 800rpx;
     left: 72rpx;
-    top: 350rpx;
+    top: 310rpx;
     font-size: 28rpx;
     color: #58656d;
     .itemBox {

@@ -164,46 +164,24 @@ export default {
       this.index = index;
       this.$refs["date-time"].show();
     },
-    /**
-     * isShowToolBar：true 点击确定获取数值
-     * isShowToolBar：false 滑动获取返回数据
-     */
-    dateTimeChange(value) {
-      that.year = value.a.substring(0, 4);
-      that.month = value.a.substring(5, 7);
-      that.day = value.a.substring(8, 10);
-      that.hour = value.b[0];
-      that.minute = value.b[1];
-      that.dateValue = value.a;
-      that.isShow = true;
-      // let item = this.list[this.index];
-      // item["detail"] = value;
-      // this.list.splice(this.index, 1, item);
-    },
     SaveMeet() {
       getResquest("CommonHelper.ashx?Method=SaveMeet", {
         OpenID: that.openid,
         Name: that.nameValue, //姓名
         Phone: that.phoneValue, //手机号码
-        Sex: that.sexValue, //性别：直接传值：男 女
-        MeetDay: that.dateValue, //预约日期
-        MeetNoon: "", //预约上下午
-        MeetTime: "", //预约时间点
+        Gender: that.sexValue, //性别：直接传值：男 女
+        MeetDate: that.dateValue, //预约日期
       }).then((res) => {
         console.log(res);
         if (res.data[0].Opt == 1) {
+          uni.setStorageSync("meetState", 1);
           uni.showToast({
             title: "提交成功",
             mask: true,
           });
-          setTimeout(function() {
-            uni.navigateBack({
-              delta: 1,
-              animationType: "pop-out",
-              animationDuration: 500,
-            });
-          }, 1800);
+          that.SaveIntegral();
         } else if (res.data[0].Opt == 2) {
+          uni.setStorageSync("meetState", 1);
           uni.showToast({
             title: "您已有预约，请勿重复预约",
             mask: true,
@@ -219,7 +197,21 @@ export default {
         }
       });
     },
-
+    SaveIntegral() {
+      getResquest("CommonHelper.ashx?Method=SaveIntegral", {
+        OpenID: that.openid,
+        IntegralType: 5,
+      }).then((result) => {
+        console.log(result);
+        setTimeout(function() {
+          uni.navigateBack({
+            delta: 1,
+            animationType: "pop-out",
+            animationDuration: 500,
+          });
+        }, 1500);
+      });
+    },
     // 确认提交
     submitInfo() {
       if (that.nameValue == "") {

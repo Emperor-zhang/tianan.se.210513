@@ -5,7 +5,7 @@ import axios from "axios";
 // ##两种创建方法：
 // 1.定义一个instance变量 发送请求是把axios替换成instance
 export let instance = axios.create({
-  baseURL: "https://wb.jaas.ac.cn/love.se.210301/", //会在发送请求的时候自动拼接在url前面
+  baseURL: "https://wb.jaas.ac.cn/TianAn.SE.210513/", //会在发送请求的时候自动拼接在url前面
   timeout: 5000,
 });
 

@@ -1,27 +1,35 @@
 <template>
-  <view class="content">
+  <view class="content" @touchmove.stop.prevent="moveHandle">
     <image
       :src="$url + 'mine/18-1.png'"
       mode="widthFix"
       v-if="list.length != 0"
     ></image>
-    <scroll-view class="listBox" scroll-y v-if="list.length != 0">
-      <block v-for="(item, index) in 8" :key="index">
+    <scroll-view
+      class="listBox"
+      scroll-y
+      :style="'height:' + height + 'rpx'"
+      v-if="list.length != 0"
+    >
+      <block v-for="(item, index) in list" :key="index">
         <view class="item-box">
           <view class="itemTop">
             <image
-              :src="$url + 'mine/18-2.png'"
+              :src="$url + 'index/1-8.png'"
               mode="scaleToFill"
               class="leftImg"
             ></image>
             <image
-              :src="$url + 'mine/18-3.png'"
+              :src="item.ImgUrl"
               mode="scaleToFill"
               class="rightImg"
             ></image>
           </view>
           <view class="itemBottom">
-            预约时间：2021-05-24 12:00
+            <text>预约时间：{{ item.MeetDate }}</text>
+            <text
+              >状态：<text>{{ item.IsFlag }}</text></text
+            >
           </view>
         </view>
       </block>
@@ -35,15 +43,24 @@
 </template>
 <script>
 var that;
+import { getResquest } from "@/utils/api.js";
+var getRpx = require("@/utils/utils.js");
 export default {
   data() {
     return {
       $url: this.url,
       list: [],
+      openid: "",
+      height: "",
     };
   },
   onLoad() {
     that = this; /**自定义组件中要onLoad换成created*/
+    that.height = getRpx.getRpx() * uni.getSystemInfoSync().windowHeight - 130;
+    that.openid = uni.getStorageSync("openid");
+    that.$nextTick(function() {
+      that.GetMineInfo();
+    });
   },
   onShow() {},
   components: {},
@@ -52,7 +69,18 @@ export default {
       /**实时监听数据的变化，也可以兼容听方法名（api->watch） */
     },
   },
-  methods: {},
+  methods: {
+    GetMineInfo() {
+      getResquest("CommonHelper.ashx?Method=GetMineInfo", {
+        MineID: 5, //我的：1我的信息，2我的积分，3我的活动，4我的礼品，5 我的预约，6我的收藏
+        OpenID: that.openid,
+      }).then((res) => {
+        console.log(res);
+        that.list = res.data;
+      });
+    },
+    moveHandle() {},
+  },
 };
 </script>
 <style lang="scss" scoped>
@@ -91,8 +119,17 @@ export default {
       .itemBottom {
         margin-top: 20rpx;
         font-size: 28rpx;
+        width: 100%;
         text-align: left;
         color: #566369;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text {
+          text {
+            color: #8a615d;
+          }
+        }
       }
     }
   }

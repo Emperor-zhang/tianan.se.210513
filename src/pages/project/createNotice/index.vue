@@ -20,7 +20,7 @@
       </view>
     </view>
     <image :src="`${$url}project/21-1.png`" mode="widthFix"></image>
-    <image class="animate1 imgUrl" :src="imgUrl" mode="widthFix"></image>
+    <image class="animate1 imgUrl" :src="imgUrl" mode="aspectFill"></image>
     <text class="name">姓名：{{ name }}</text>
     <text class="tel">{{ tel }}</text>
     <text class="addr">{{ addr }}</text>
@@ -71,8 +71,11 @@ export default {
       qrcodeUrl: "",
       qrcode: "",
       obj: {
-        qrcodeImg: "https://wb.jaas.ac.cn/Love.SE.210204/qr/1.png",
         name: "大萨达所",
+        imgurl: "",
+        tel: "",
+        addr: "",
+        qCode: "",
       },
       id: "",
       imgUrl: "",
@@ -80,16 +83,18 @@ export default {
   },
   onLoad(e) {
     that = this; /**自定义组件中要onLoad换成created*/
-    that.id = e.id;
-    that.shareData.path = "/pages/project/counselorCard/index" + e.id;
   },
   onShow() {
-    that.GetSmallCode();
-    uni.hideHomeButton();
-    // uni.showLoading({
-    //   title: "页面正在加载",
-    //   mask: true,
-    // });
+    let pages = getCurrentPages();
+    let currentPage = pages[pages.length - 1];
+    that.id = currentPage.options.AdviserID;
+    that.shareData.path =
+      "/pages/project/counselorCard/index?AdviserID=" + that.id;
+    uni.showLoading({
+      title: "页面正在加载",
+      mask: true,
+    });
+    that.GetCreateInfo();
   },
   onUnload() {
     that.flag = false;
@@ -99,31 +104,32 @@ export default {
   methods: {
     // 获取生成详情页数据
     GetCreateInfo() {
-      getResquest("CommonHelper.ashx?Method=GetCreateInfo", {
-        UserID: 1,
+      getResquest("CommonHelper.ashx?Method=GetAdviserInfo", {
+        AdviserID: that.id, //销售人员
       }).then((res) => {
         console.log(res);
-        that.imgUrl = res.data[0].ImgUrl;
-        that.name = res.data[0].Name;
-        that.tel = res.data[0].Phone;
-        that.qrcode = res.data[0].PosterQr;
-        that.qrcodeImg = res.data[0].PosterQr;
-        uni.hideLoading();
+        that.name = that.obj.name = res.data[0].Name;
+        that.tel = that.obj.tel = res.data[0].Phone;
+        that.imgUrl = that.obj.imgurl = res.data[0].ImgUrl;
+        that.addr = that.obj.addr = res.data[0].Addr;
+        that.qrcode = that.obj.qCode = res.data[0].Qr;
+        that.shareData.path =
+          "/pages/project/counselorCard/index?AdviserID=" + that.id;
         that.Show = false;
-        that.flag = true;
       });
     },
+
     // 生成二维码
-    GetSmallCode() {
-      getResquest("CommonHelper.ashx?Method=GetSmallCode", {
-        path: "/pages/project/counselorCard/index", //详情路径
-        // scene: that.id, //userid参数
-        scene: 1,
-      }).then((res) => {
-        console.log(res);
-        that.GetCreateInfo();
-      });
-    },
+    // GetSmallCode() {
+    //   getResquest("CommonHelper.ashx?Method=GetSmallCode", {
+    //     path: "/pages/project/counselorCard/index", //详情路径
+    //     // scene: that.id, //userid参数
+    //     scene: 1,
+    //   }).then((res) => {
+    //     console.log(res);
+    //     that.GetCreateInfo();
+    //   });
+    // },
     backClick() {
       console.log(that.flag);
       if (that.flag == true) {
@@ -134,7 +140,10 @@ export default {
     },
     getImage() {
       //生成图片
-      if (uni.getStorageSync("imagePath")) {
+      if (
+        uni.getStorageSync("imagePath") &&
+        uni.getStorageSync("advid") == that.id
+      ) {
         that.imagePath = uni.getStorageSync("imagePath");
         that.saveImage();
       } else {
@@ -143,6 +152,7 @@ export default {
     },
     initData() {
       that.isShow = true;
+      uni.setStorageSync("advid", that.id);
       uni.showLoading({
         title: "拼命生成中...",
         mask: true,
@@ -312,8 +322,10 @@ export default {
   .imgUrl {
     position: absolute;
     width: 130rpx;
+    height: 130rpx;
     top: 21%;
     left: 108rpx;
+    border-radius: 200rpx;
   }
   .name {
     position: absolute;

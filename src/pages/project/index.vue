@@ -37,13 +37,11 @@
       :circular="true"
       :interval="interval"
       :duration="duration"
-      @change="change"
     >
-      <block v-for="(item, index) in 5" :key="index">
-        <swiper-item>
+      <block v-for="(item, index) in swiperList" :key="index">
+        <swiper-item @click="previewImage(index)">
           <view class="swiper-item">
-            <text>{{ index }}</text>
-            <image :src="$url + 'project/4-2-1.png'" mode="scaleToFill"></image>
+            <image :src="item.imgUrl" mode="scaleToFill"></image>
           </view>
         </swiper-item>
       </block>
@@ -112,15 +110,11 @@
     ></image>
     <!-- 项目相册 -->
     <view class="ProjectAlbum">
-      <block v-for="(item, index) in 2" :key="index">
+      <block v-for="(item, index) in album" :key="index">
         <view class="albumBox">
-          <image
-            class="albumImg"
-            :src="$url + 'project/4-8.png'"
-            mode="scaleToFill"
-          ></image>
+          <image class="albumImg" :src="item.imgUrl" mode="scaleToFill"></image>
           <view class="intro">
-            效果图
+            {{ item.imgName }}
           </view>
         </view>
       </block>
@@ -146,12 +140,12 @@
     </view>
     <!-- 销售顾问 -->
     <view class="SalesConsultant">
-      <block v-for="item in SalesList" :key="item.adviserID">
+      <block v-for="item in adviser" :key="item.adviserID">
         <view class="box" @click="counselorCard(item.adviserID)">
           <image
             class="animate1 SalesUrl"
             :src="item.imgUrl"
-            mode="widthFix"
+            mode="aspectFill"
           ></image>
           <text class="SaleName">{{ item.name }}</text>
           <image
@@ -232,12 +226,17 @@ export default {
       autoplay: false,
       interval: 2000,
       duration: 500,
+      openid: "",
+      urls: [],
+      swiperList: [],
+      adviser: [],
+      album: [],
       iphone: "更换电话号码",
       listUp: ["789456,1234567,456789456"],
       listDown: ["789456,1234567,456789456"],
       title: "复制成功",
       info: "微信号已复制，请到微信中粘贴添加好友",
-      meetState: 0,
+      meetState: 2,
       yangrMsgShow: false,
       navTitle: "销售动态",
       navTitle1: "实时资讯",
@@ -247,7 +246,6 @@ export default {
       buildingType: "高层",
       buildingFace: "精装",
       buildingAge: "70年",
-      SalesList: [],
       latitude: 31.643004,
       longitude: 119.053075,
       covers: [
@@ -276,11 +274,14 @@ export default {
   },
   onLoad() {
     that = this; /**自定义组件中要onLoad换成created*/
+    that.openid = uni.getStorageSync("openid");
     that.Convert();
-
+    that.GetSwiperList();
     that.MeetCheck();
   },
-  onShow() {},
+  onShow() {
+    that.meetState = uni.getStorageSync("meetState");
+  },
   components: { noticeBar, yangrMsg },
 
   methods: {
@@ -288,6 +289,7 @@ export default {
       getResquest("CommonHelper.ashx?Method=MeetCheck", {
         OpenID: that.openid,
       }).then((res) => {
+        console.log(res);
         if (res.data[0].Opt == 1) {
           that.meetState = 1;
           uni.setStorageSync("meetState", 1);
@@ -298,6 +300,35 @@ export default {
           //可以进入预约界面
         }
         that.GetSimpleInfo();
+      });
+    },
+    // 楼盘相册/置业顾问缩略接口
+    GetSimpleInfo() {
+      getResquest("CommonHelper.ashx?Method=GetSimpleInfo", {
+        PageIndex: 2, //1 表示首页的前三活动；2 表示项目信息页的 楼盘相册前二或置业顾问前二
+      }).then((res) => {
+        console.log(res);
+        that.adviser = res.data[0].Adviser;
+        that.album = res.data[0].Images;
+      });
+    },
+    // 轮播
+    GetSwiperList() {
+      getResquest("CommonHelper.ashx?Method=GetSwiperList", {
+        PageIndex: 2, //1表示首页的轮播图，2表示项目信息页的轮播图
+      }).then((res) => {
+        console.log(res);
+        that.swiperList = res.data[0].Header;
+        that.urls = that.swiperList.map((res) => {
+          return res.imgUrl;
+        });
+      });
+    },
+    // swiper预览
+    previewImage(index) {
+      uni.previewImage({
+        current: index,
+        urls: that.urls,
       });
     },
     change(e) {
@@ -322,7 +353,7 @@ export default {
           title: "您已预约，请到我的预约中查看",
           icon: "none",
         });
-      } else if (that.meetState == 2) {
+      } else if (that.meetState == 2 || !that.meetState) {
         uni.navigateTo({
           url: "/pages/project/pactHouse/index",
           animationType: "pop-in",
@@ -355,13 +386,13 @@ export default {
     // 销售动态
     scrollMore() {
       uni.navigateTo({
-        url: `/pages/index/projectInfo/index?title=${that.navTitle}`,
+        url: `/pages/index/projectInfo/index?title=${that.navTitle}&num=4`,
       });
     },
     // 实时资讯
     scrollMore1() {
       uni.navigateTo({
-        url: `/pages/index/projectInfo/index?title=${that.navTitle1}`,
+        url: `/pages/index/projectInfo/index?title=${that.navTitle1}&num=3`,
       });
     },
     //楼盘详情
@@ -388,17 +419,14 @@ export default {
     counselorCard(id) {
       console.log(id);
       uni.navigateTo({
-        url:
-          "/pages/project/counselorCard/index?UserID=" +
-          id +
-          "&meetstate=" +
-          that.meetState,
+        url: "/pages/project/counselorCard/index?AdviserID=" + id,
         animationType: "pop-in",
         animationDuration: 200,
       });
     },
     // 加微信
     addWechat(wechat) {
+      console.log(wechat);
       uni.setClipboardData({
         data: wechat,
         success: function(res) {
@@ -406,6 +434,7 @@ export default {
           that.yangrMsgShow = true;
         },
         fail(err) {
+          console.log(err);
           uni.showToast({
             title: "复制失败，请稍后再试！",
             icon: "none",
@@ -416,26 +445,6 @@ export default {
     // 复制微信成功弹窗
     closeYangrMsg() {
       that.yangrMsgShow = false;
-    },
-    //获取置业顾问详情
-    GetSimpleInfo() {
-      getResquest("CommonHelper.ashx?Method=GetSimpleInfo", {
-        ProjectCode: "yljx",
-      }).then((res) => {
-        console.log(res);
-        that.SalesList = res.data.Adviser;
-        that.ImagesList = res.data.Images;
-        that.buildingUrl = res.data.Project[0].buildingUrl;
-        that.buildingType = res.data.Project[0].buildingType;
-        that.buildingName = res.data.Project[0].buildingName;
-        that.buildingFace = res.data.Project[0].buildingFace;
-        that.buildingAge = res.data.Project[0].buildingAge;
-        // that.SalesUrl = res.data[0].imgUrl;
-        // that.SaleName = res.data[0].name;
-        // that.phoneNumber = res.data[0].phone;
-        // that.setWechat = res.data[0].weixin;
-        // that.SalesID = res.data[0].adviserID;
-      });
     },
   },
 };
@@ -679,14 +688,15 @@ export default {
         width: 140rpx;
         top: 30rpx;
         left: 10rpx;
+        height: 148rpx;
       }
       .setTel {
-        width: 35%;
+        width: 100rpx;
         top: 78rpx;
         left: 174rpx;
       }
       .setWechat {
-        width: 35%;
+        width: 100rpx;
         top: 140rpx;
         left: 174rpx;
       }

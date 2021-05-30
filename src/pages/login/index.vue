@@ -54,7 +54,9 @@ export default {
       nickurl: "",
       nickname: "",
       openid: "",
+      gender: "",
       canUseGetUserProfile: false,
+      nickState: 0,
     };
   },
   onLoad(options) {
@@ -65,6 +67,7 @@ export default {
   },
   onShow() {
     that.openid = uni.getStorageSync("openid");
+    that.nickState = uni.getStorageSync("nickState");
   },
   components: {},
   methods: {
@@ -74,37 +77,40 @@ export default {
         NickName: that.nickname, //昵称
         NickUrl: that.nickurl, //头像
       }).then((res) => {
-        uni.setStorageSync("nickname", res.data[0].NickName);
-        uni.setStorageSync("nickurl", res.data[0].NickUrl);
-        uni.showLoading({
-          title: "正在登陆",
-        });
-        console.log(res);
-        setTimeout(function() {
-          uni.navigateBack({
-            delta: 1,
+        if (res.data[0].Opt == 1) {
+          uni.showLoading({
+            title: "正在登陆",
+            mask: true,
+            duration: 1500,
           });
-        }, 1500);
+          uni.setStorageSync("nickState", res.data[0].NickState);
+          if (that.nickState == 0) {
+            that.SaveIntegral();
+          }
+          console.log(res);
+          setTimeout(function() {
+            uni.hideLoading();
+            uni.navigateBack({
+              delta: 1,
+            });
+          }, 1500);
+        } else {
+          uni.showToast({
+            title: "请求失败，请稍后重试",
+            icon: "none",
+            mask: true,
+          });
+        }
       });
     },
-    // 授权
-    // bindGetUserInfo(e) {
-    //   let that = this;
-    //   console.log(e.detail.userInfo);
-    //   if (e.detail.errMsg == "getUserInfo:ok") {
-    //     uni.setStorageSync("power", 1);
-    //     app.globalData.power = 1;
-    //     that.nickname = e.detail.userInfo.nickName;
-    //     that.nickurl = e.detail.userInfo.avatarUrl;
-    //     uni.setStorageSync("nickname", e.detail.userInfo.nickName);
-    //     uni.setStorageSync("nickurl", e.detail.userInfo.avatarUrl);
-    //     uni.navigateBack({
-    //       delta: 1,
-    //     });
-    //   } else {
-    //     //点击了拒绝
-    //   }
-    // },
+    SaveIntegral() {
+      getResquest("CommonHelper.ashx?Method=SaveIntegral", {
+        OpenID: that.openid,
+        IntegralType: 1,
+      }).then((result) => {
+        console.log(result);
+      });
+    },
     btnThink() {
       uni.navigateBack({
         delta: 1,
@@ -112,15 +118,24 @@ export default {
     },
     bindGetUserInfo(e) {
       //旧版本方式
-      if (this.canUseGetUserProfile == false) {
+      if (that.canUseGetUserProfile == false) {
         //获取授权信息
         if (e.detail.userInfo) {
           console.log("用户允许了授权");
           console.log(e.detail.userInfo); //1.拿到基本的微信信息!!
+          uni.setStorageSync("isLogin", true);
           uni.setStorageSync("nickname", e.detail.userInfo.nickName);
           uni.setStorageSync("nickurl", e.detail.userInfo.avatarUrl);
-          uni.navigateBack({
-            delta: 1,
+          if (e.detail.userInfo.gender == 1) {
+            that.gender = "男";
+          } else if (e.detail.userInfo.gender == 2) {
+            that.gender = "女";
+          }
+          uni.setStorageSync("gender", that.gender);
+          that.nickurl = e.detail.userInfo.avatarUrl;
+          that.nickname = e.detail.userInfo.nickName;
+          that.$nextTick(function() {
+            that.SaveNickName();
           });
         }
         //新版本方式
@@ -131,10 +146,18 @@ export default {
           success: function(res) {
             console.log(res.userInfo);
             uni.setStorageSync("isLogin", true);
+            that.nickurl = res.userInfo.avatarUrl;
+            that.nickname = res.userInfo.nickName;
             uni.setStorageSync("nickname", res.userInfo.nickName);
             uni.setStorageSync("nickurl", res.userInfo.avatarUrl);
-            uni.navigateBack({
-              delta: 1,
+            if (res.userInfo.gender == 1) {
+              that.gender = "男";
+            } else if (res.userInfo.gender == 2) {
+              that.gender = "女";
+            }
+            uni.setStorageSync("gender", that.gender);
+            that.$nextTick(function() {
+              that.SaveNickName();
             });
           },
           fail: function(res) {
