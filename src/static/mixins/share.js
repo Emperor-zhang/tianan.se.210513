@@ -2,7 +2,7 @@ export const shareMixins = {
   data() {
     return {
       shareData: {
-        title: "天安·云境",
+        title: "天安•云境线上售楼处",
         path: "/pages/index/index",
         imageUrl: "https://wb.jaas.ac.cn/SmallExePic/TianAn.SE.210513/img/icon.jpg",
       },

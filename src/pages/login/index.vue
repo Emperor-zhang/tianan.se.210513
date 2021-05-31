@@ -68,9 +68,26 @@ export default {
   onShow() {
     that.openid = uni.getStorageSync("openid");
     that.nickState = uni.getStorageSync("nickState");
+    that.login();
   },
   components: {},
   methods: {
+    login() {
+      if (!that.openid) {
+        uni.login({
+          provider: "weixin",
+          success: function(loginRes) {
+            getResquest("CommonHelper.ashx?Method=GetOpenID", {
+              Code: loginRes.code,
+            }).then((res) => {
+              uni.setStorageSync("openid", res.data[0].OpenID);
+              uni.setStorageSync("userid", res.data[0].UserID);
+              that.openid = res.data[0].OpenID;
+            });
+          },
+        });
+      }
+    },
     SaveNickName() {
       getResquest("CommonHelper.ashx?Method=SaveNickName", {
         OpenID: that.openid,
@@ -103,12 +120,16 @@ export default {
         }
       });
     },
+    // 积分
     SaveIntegral() {
       getResquest("CommonHelper.ashx?Method=SaveIntegral", {
         OpenID: that.openid,
         IntegralType: 1,
-      }).then((result) => {
-        console.log(result);
+      }).then((res) => {
+        console.log(res);
+        uni.showToast({
+          title: "积分+150",
+        });
       });
     },
     btnThink() {

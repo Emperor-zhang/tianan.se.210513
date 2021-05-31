@@ -5,7 +5,9 @@
 </template>
 <script>
 var that;
+import { shareMixins } from "@/static/mixins/share.js";
 export default {
+  mixins: [shareMixins],
   data() {
     return {
       $url: this.url,

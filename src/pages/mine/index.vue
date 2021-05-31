@@ -32,11 +32,15 @@ export default {
       isLogin: false,
       nickurl: "",
       nickname: "",
+      NickState: "",
+      openid: "",
     };
   },
   onLoad() {
     that = this; /**自定义组件中要onLoad换成created*/
     that.isLogin = uni.getStorageSync("isLogin");
+    that.openid = uni.getStorageSync("openid");
+    that.GetMineInfo();
   },
   onShow() {
     that.isLogin = uni.getStorageSync("isLogin");
@@ -46,6 +50,16 @@ export default {
   components: {},
   methods: {
     moveHandle() {},
+    GetMineInfo() {
+      getResquest("CommonHelper.ashx?Method=GetMineInfo", {
+        MineID: 7, //我的：1我的信息，2我的积分，3我的活动，4我的礼品，5 我的预约，6我的收藏  7.我的页面
+        OpenID: that.openid,
+      }).then((res) => {
+        console.log(res);
+        that.nickState = res.data[0].NickState;
+        uni.setStorageSync("nickState", res.data[0].NickState);
+      });
+    },
     handle(ind) {
       switch (ind) {
         case 0:

@@ -106,6 +106,7 @@ export default {
         console.log(res);
         that.list = res.data[0].GoodsList;
         that.integration = res.data[0].Integral;
+        uni.setStorageSync("nickState", res.data[0].NickState);
         // tab.NickState; //是否授权头像：0未授权，1已授权
         // tab.NickName; //昵称
         // tab.NickUrl; //头像

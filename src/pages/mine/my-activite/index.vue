@@ -6,7 +6,7 @@
       v-if="list.length != 0"
     ></image>
     <scroll-view scroll-y class="box" v-if="list.length != 0">
-      <block v-for="(item, index) in 10" :key="index">
+      <block v-for="(item, index) in list" :key="index">
         <view class="item" @click="detailInfo">
           <image
             :src="$url + 'mine/16-2.png'"
@@ -15,7 +15,9 @@
           ></image>
           <view class="activeInfo">
             <view class="activeName">活动名称：<text>活动名称</text></view>
-            <view class="activeTime">活动时间：<text>2021-05-21</text></view>
+            <view class="activeTime"
+              >活动时间：<text>{{ item.CreateDate | formatedate }}</text></view
+            >
           </view>
         </view>
       </block>
@@ -30,7 +32,9 @@
 <script>
 var that;
 import { getResquest } from "@/utils/api.js";
+import { shareMixins } from "@/static/mixins/share.js";
 export default {
+  mixins: [shareMixins],
   data() {
     return {
       $url: this.url,
@@ -47,6 +51,14 @@ export default {
   },
   onShow() {},
   components: {},
+  filters: {
+    formatedate: function(d) {
+      if (d != "") {
+        var date = new Date(parseInt(d.substring(6, 19)));
+        return date.toLocaleDateString();
+      }
+    },
+  },
   methods: {
     moveHandle() {},
     detailInfo() {
@@ -56,10 +68,11 @@ export default {
     },
     GetMineInfo() {
       getResquest("CommonHelper.ashx?Method=GetMineInfo", {
-        MineID: 4, //我的：1我的信息，2我的积分，3我的活动，4我的礼品，5 我的预约，6我的收藏
+        MineID: 3, //我的：1我的信息，2我的积分，3我的活动，4我的礼品，5 我的预约，6我的收藏
         OpenID: that.openid,
       }).then((res) => {
         console.log(res);
+        // that.list = res.data;
       });
     },
   },

@@ -44,6 +44,12 @@ export default {
         MsgID: that.msgId,
       }).then((result) => {
         console.log(result);
+        if (result.data[0].Opt == 1) {
+          uni.showToast({
+            title: "积分+10",
+            mask: true,
+          });
+        }
       });
     },
   },

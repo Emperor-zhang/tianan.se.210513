@@ -25,12 +25,8 @@
     <!-- 热门活动 -->
     <view class="hotEvent">
       <block v-for="(item, index) in activity" :key="index">
-        <view class="eventop">
-          <image
-            class="hotTitle"
-            :src="$url + 'index/1-6.png'"
-            mode="scaleToFill"
-          ></image>
+        <view class="eventop" @click="eventop(item.ImgName, item.LinkUrl)">
+          <image class="hotTitle" :src="item.ImgUrl" mode="scaleToFill"></image>
         </view>
       </block>
     </view>
@@ -214,7 +210,13 @@ export default {
       }).then((res) => {
         console.log(res);
         that.goodsList = res.data[0].Goods;
-        // that.activity = res.data.Activity;
+        that.activity = res.data[0].Activity;
+      });
+    },
+    // 热门活动详情
+    eventop(ImgName, LinkUrl) {
+      uni.navigateTo({
+        url: `/pages/index/activeInfo/index?name=${ImgName}&url=${LinkUrl}`,
       });
     },
   },

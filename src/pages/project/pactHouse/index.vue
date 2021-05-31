@@ -203,6 +203,12 @@ export default {
         IntegralType: 5,
       }).then((result) => {
         console.log(result);
+        if (result.data[0].Opt == 1) {
+          uni.showToast({
+            title: "积分+10",
+            mask: true,
+          });
+        }
         setTimeout(function() {
           uni.navigateBack({
             delta: 1,

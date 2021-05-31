@@ -45,7 +45,9 @@
 var that;
 import { getResquest } from "@/utils/api.js";
 var getRpx = require("@/utils/utils.js");
+import { shareMixins } from "@/static/mixins/share.js";
 export default {
+  mixins: [shareMixins],
   data() {
     return {
       $url: this.url,

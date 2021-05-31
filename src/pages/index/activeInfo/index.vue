@@ -1,26 +1,29 @@
 <template>
   <view class="content">
-    <image :src="$url + 'mine/20-1.png'" mode="widthFix"></image>
+    <image :src="src" mode="widthFix"></image>
   </view>
 </template>
 <script>
 var that;
+import { shareMixins } from "@/static/mixins/share.js";
 export default {
+  mixins: [shareMixins],
   data() {
     return {
       $url: this.url,
+      src: "",
     };
   },
-  onLoad() {
+  onLoad(res) {
     that = this; /**自定义组件中要onLoad换成created*/
+    console.log(res);
+    that.src = res.url;
+    uni.setNavigationBarTitle({
+      title: res.name,
+    });
   },
   onShow() {},
   components: {},
-  watch: {
-    num: function(newValue, oldValue) {
-      /**实时监听数据的变化，也可以兼容听方法名（api->watch） */
-    },
-  },
   methods: {},
 };
 </script>

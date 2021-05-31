@@ -7,7 +7,6 @@
 var that;
 import stateCounsel from "@/components/state-counsel/index.vue";
 import { shareMixins } from "@/static/mixins/share.js";
-
 export default {
   mixins: [shareMixins],
   data() {

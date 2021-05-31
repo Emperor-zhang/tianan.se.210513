@@ -24,9 +24,15 @@
         <view class="itemBox">
           <view class="item-top">
             <view class="title">{{ item.ThingName }}</view>
-            <view class="inte">+{{ item.Integral }}分</view>
+            <view class="inte"
+              >{{
+                item.Integral.toString().startsWith("-")
+                  ? item.Integral
+                  : "+" + item.Integral
+              }}分</view
+            >
           </view>
-          <view class="time">{{ item.CreateDate }}&nbsp;&nbsp;12:12</view>
+          <view class="time">{{ item.CreateDate }}</view>
         </view>
       </block>
     </scroll-view>
@@ -41,7 +47,9 @@
 var that;
 var getRpx = require("@/utils/utils.js");
 import { getResquest } from "@/utils/api.js";
+import { shareMixins } from "@/static/mixins/share.js";
 export default {
+  mixins: [shareMixins],
   data() {
     return {
       $url: this.url,

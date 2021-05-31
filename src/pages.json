@@ -18,7 +18,12 @@
         "navigationBarTitleText": "项目资讯"
       }
     },
-
+    {
+      "path": "pages/index/activeInfo/index",
+      "style": {
+        "navigationBarTitleText": "活动详情"
+      }
+    },
     {
       "path": "pages/login/index",
       "style": {
