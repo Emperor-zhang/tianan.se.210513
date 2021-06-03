@@ -111,6 +111,7 @@ export default {
       openid: "",
       navTitle: "项目资讯",
       letter: "家书专栏",
+      nickState: 0,
     };
   },
   onLoad() {
@@ -118,7 +119,9 @@ export default {
     that.openid = uni.getStorageSync("openid");
     that.login();
   },
-  onShow() {},
+  onShow() {
+    that.nickState = uni.getStorageSync("nickState");
+  },
   methods: {
     // 品牌简介
     brief() {
@@ -141,9 +144,15 @@ export default {
     },
     // 积分商城
     GetGoodsInfo(goodsid) {
-      uni.navigateTo({
-        url: `/pages/shop/goods-detail/index?goodsid=${goodsid}`,
-      });
+      if (that.nickState == 0) {
+        uni.navigateTo({
+          url: `/pages/login/index`,
+        });
+      } else {
+        uni.navigateTo({
+          url: `/pages/shop/goods-detail/index?goodsid=${goodsid}`,
+        });
+      }
     },
     // 积分商城更多
     inteShopMore() {

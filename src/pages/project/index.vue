@@ -154,12 +154,12 @@
             mode="widthFix"
             @click.stop="callUp(item.phone)"
           ></image>
-          <image
+          <!-- <image
             class="animate1 setWechat"
             :src="$url + 'project/7-3.png'"
             mode="widthFix"
             @click.stop="addWechat(item.weixin)"
-          ></image>
+          ></image> -->
         </view>
       </block>
     </view>
@@ -231,7 +231,7 @@ export default {
       swiperList: [],
       adviser: [],
       album: [],
-      iphone: "更换电话号码",
+      iphone: "025-88018889",
       listUp: ["789456,1234567,456789456"],
       listDown: ["789456,1234567,456789456"],
       title: "复制成功",

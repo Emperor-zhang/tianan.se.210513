@@ -1,11 +1,7 @@
 <template>
   <view class="content" @touchmove.stop.prevent="moveHandle">
     <image :src="$url + 'project/7-1.png'" mode="widthFix"></image>
-    <scroll-view
-      class="SalesConsultant"
-      scroll-y="true"
-      :style="'height:' + height + 'rpx'"
-    >
+    <scroll-view class="SalesConsultant" scroll-y="true">
       <block v-for="item in list" :key="item.AdviserID">
         <view class="box" @click="handleInfo(item.AdviserID)">
           <view class="list_item">
@@ -21,12 +17,12 @@
               mode="widthFix"
               @click.stop="callUp(item.Phone)"
             ></image>
-            <image
+            <!-- <image
               class="animate1 setWechat"
               :src="$url + 'project/7-3.png'"
               mode="widthFix"
               @click.stop="addWechat(item.WeixinID)"
-            ></image>
+            ></image> -->
           </view>
         </view>
       </block>
@@ -61,7 +57,7 @@ export default {
   },
   onLoad() {
     that = this; /**自定义组件中要onLoad换成created*/
-    that.height = getRpx.getRpx() * uni.getSystemInfoSync().windowHeight - 380;
+    // that.height = getRpx.getRpx() * uni.getSystemInfoSync().windowHeight - 490;
   },
   onShow() {
     that.getSalesInfo();
@@ -122,7 +118,7 @@ export default {
     position: absolute;
     width: 600rpx;
     left: 75rpx;
-    height: 850rpx;
+    height: 840rpx;
     top: 280rpx;
     .box {
       position: relative;

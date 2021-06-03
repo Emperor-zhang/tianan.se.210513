@@ -29,7 +29,7 @@
     <view class="housesInfo">
       <image
         class="animate1 housesPoster"
-        src="https://wb.jaas.ac.cn/Love.SE.210204/LoveWeb/UpLoad/fengmian.png"
+        src="https://wb.jaas.ac.cn/SmallExePic/TianAn.SE.210513/img/fengmian.png"
       ></image>
     </view>
 

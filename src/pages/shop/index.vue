@@ -202,6 +202,7 @@ export default {
             height: 240rpx;
             position: absolute;
             top: 0;
+            border-radius: 20rpx 20rpx 0 0;
           }
           .textBox {
             width: 280rpx;

@@ -30,6 +30,7 @@ export default {
       addr: "",
       tel: "",
       openid: "",
+      state: 0,
     };
   },
   onLoad() {
@@ -39,13 +40,37 @@ export default {
   onShow() {
     let pages = getCurrentPages();
     let currentPage = pages[pages.length - 1];
+    console.log(that.state);
     that.goodsid = currentPage.options.goodsid;
-    that.GetGoodsInfo();
+    that.login();
   },
   components: {},
   methods: {
+    login() {
+      if (!that.openid) {
+        uni.login({
+          provider: "weixin",
+          success: function(loginRes) {
+            console.log(loginRes);
+            getResquest("CommonHelper.ashx?Method=GetOpenID", {
+              Code: loginRes.code,
+            }).then((res) => {
+              console.log(res);
+              uni.setStorageSync("openid", res.data[0].OpenID);
+              uni.setStorageSync("userid", res.data[0].UserID);
+              app.globalData.openid = res.data[0].OpenID;
+              that.openid = res.data[0].OpenID;
+              that.GetGoodsInfo();
+            });
+          },
+        });
+      } else {
+        that.GetGoodsInfo();
+      }
+    },
     GetGoodsInfo() {
       getResquest("CommonHelper.ashx?Method=GetGoodsInfo", {
+        OpenID: that.openid,
         GoodsID: that.goodsid, //商品编号
       }).then((res) => {
         console.log(res);
@@ -54,44 +79,61 @@ export default {
         that.tel = res.data[0].GoodsPhone;
         that.addr = res.data[0].GoodsAddr;
         that.integration = res.data[0].GoodsIntegral;
+        that.state = res.data[0].PhoneState;
       });
     },
     // 兑换
     goodschange() {
-      getResquest("CommonHelper.ashx?Method=GoodsExchange", {
-        OpenID: that.openid,
-        GoodsID: that.goodsid, //商品编号
-        Integral: that.integration, //积分
-      }).then((res) => {
-        console.log(res);
-        switch (res.data[0].Opt) {
-          case 1:
-            that.integration = res.data[0].Integral;
-            that.toast("兑换成功", "success");
-            break;
-          case 2:
-            that.toast("您的积分不足以兑换该礼品", "none");
-            break;
-          case 3:
-            that.toast("活动暂时停止", "none");
-            break;
-          case 4:
-            that.integration = res.data[0].Integral;
-            that.toast("该礼品已被对完", "none");
-            break;
-          case 5:
-            that.toast("该礼品已被下架", "none");
-            break;
-          default:
-            that.toast("数据请求错误，请重试", "none");
-            break;
-        }
-        setTimeout(function() {
-          uni.navigateBack({
-            delta: 1,
-          });
-        }, 1500);
-      });
+      console.log(that.state);
+      if (that.state == 0) {
+        uni.navigateTo({
+          url: "/pages/shop/apply/index",
+        });
+      } else {
+        uni.showModal({
+          title: "提示",
+          content: "您确认要兑换此商品吗",
+          success: function(res) {
+            if (res.confirm) {
+              getResquest("CommonHelper.ashx?Method=GoodsExchange", {
+                OpenID: that.openid,
+                GoodsID: that.goodsid, //商品编号
+                Integral: that.integration, //积分
+              }).then((res) => {
+                console.log(res);
+                switch (res.data[0].Opt) {
+                  case 1:
+                    that.integration = res.data[0].Integral;
+                    that.toast("兑换成功", "success");
+                    break;
+                  case 2:
+                    that.toast("您的积分不足以兑换该礼品", "none");
+                    break;
+                  case 3:
+                    that.toast("活动暂时停止", "none");
+                    break;
+                  case 4:
+                    that.toast("该礼品已被对完", "none");
+                    break;
+                  case 5:
+                    that.toast("该礼品已被下架", "none");
+                    break;
+                  default:
+                    that.toast("数据请求错误，请重试", "none");
+                    break;
+                }
+                setTimeout(function() {
+                  uni.navigateBack({
+                    delta: 1,
+                  });
+                }, 1500);
+              });
+            } else if (res.cancel) {
+              console.log("用户点击取消");
+            }
+          },
+        });
+      }
     },
     toast(tit, state) {
       uni.showToast({

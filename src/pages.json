@@ -91,6 +91,12 @@
       }
     },
     {
+      "path": "pages/shop/apply/index",
+      "style": {
+        "navigationBarTitleText": "报名"
+      }
+    },
+    {
       "path": "pages/mine/index",
       "style": {
         "navigationBarTitleText": "我的"
@@ -148,7 +154,8 @@
   "tabBar": {
     "color": "#61b7b6",
     "selectedColor": "#dbb674",
-    "backgroundColor": "linear-gradient(#47CECF,#BAEED5)",
+    "backgroundColor": "#f4f4f4",
+    "borderStyle": "white",
     "list": [
       {
         "pagePath": "pages/index/index",

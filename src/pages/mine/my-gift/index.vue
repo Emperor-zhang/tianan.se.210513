@@ -8,7 +8,7 @@
 
     <scroll-view class="box" scroll-y v-if="list.length != 0">
       <blobk v-for="(item, index) in list" :key="index">
-        <view class="item">
+        <view class="item" @click="GetGoodsInfo(item.GoodsID)">
           <image
             :src="item.GoodsUrl"
             mode="scaleToFill"
@@ -48,6 +48,7 @@ export default {
       $url: this.url,
       list: [],
       openid: "",
+      nickState: 0,
     };
   },
   onLoad() {
@@ -56,10 +57,23 @@ export default {
   },
   onShow() {
     that.GetMineInfo();
+    that.nickState = uni.getStorageSync("nickState");
   },
   components: {},
   methods: {
     moveHandle() {},
+    // 积分商城
+    GetGoodsInfo(goodsid) {
+      if (that.nickState == 0) {
+        uni.navigateTo({
+          url: `/pages/login/index`,
+        });
+      } else {
+        uni.navigateTo({
+          url: `/pages/shop/goods-detail/index?goodsid=${goodsid}`,
+        });
+      }
+    },
     GetMineInfo() {
       getResquest("CommonHelper.ashx?Method=GetMineInfo", {
         MineID: 4, //我的：1我的信息，2我的积分，3我的活动，4我的礼品，5 我的预约，6我的收藏

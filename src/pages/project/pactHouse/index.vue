@@ -175,10 +175,6 @@ export default {
         console.log(res);
         if (res.data[0].Opt == 1) {
           uni.setStorageSync("meetState", 1);
-          uni.showToast({
-            title: "提交成功",
-            mask: true,
-          });
           that.SaveIntegral();
         } else if (res.data[0].Opt == 2) {
           uni.setStorageSync("meetState", 1);
@@ -202,14 +198,11 @@ export default {
         OpenID: that.openid,
         IntegralType: 5,
       }).then((result) => {
-        console.log(result);
-        if (result.data[0].Opt == 1) {
+        setTimeout(function() {
           uni.showToast({
-            title: "积分+10",
+            title: "提交成功",
             mask: true,
           });
-        }
-        setTimeout(function() {
           uni.navigateBack({
             delta: 1,
             animationType: "pop-out",

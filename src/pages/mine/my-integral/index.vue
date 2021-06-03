@@ -5,22 +5,38 @@
       mode="widthFix"
       v-if="list.length != 0"
     ></image>
-    <view class="search" v-if="list.length != 0">
-      <uni-search-bar
-        :placeholder="placeholder"
-        :radius="radius"
-        :bgColor="bgColor"
-        @input="handleSearch"
-      >
-      </uni-search-bar>
+    <view class="dropdownMenu">
+      <lv-select
+        @handleSearch="handleSearch"
+        @change="change"
+        placeholder="请输入信息"
+        :infoList="infoList"
+        :showValue="showValue"
+        v-model="searchValue"
+        :loading="loading"
+        type="primary"
+        :uniShadow="true"
+      ></lv-select>
+      <image
+        class="jiantou"
+        :class="[{ clear: flag }]"
+        :src="$url + 'mine/arrow' + num + '.png'"
+        mode="widthFix"
+      ></image>
     </view>
+    <image
+      class="search"
+      :src="$url + 'mine/15-3.png'"
+      mode="widthFix"
+      @click="search"
+    ></image>
     <scroll-view
       class="listBox"
       scroll-y
-      v-if="list.length != 0"
+      v-if="recordList.length != 0"
       :style="'height:' + height + 'rpx'"
     >
-      <block v-for="(item, index) in val == '' ? list : newList" :key="index">
+      <block v-for="(item, index) in recordList" :key="index">
         <view class="itemBox">
           <view class="item-top">
             <view class="title">{{ item.ThingName }}</view>
@@ -37,7 +53,7 @@
       </block>
     </scroll-view>
     <image
-      v-if="list.length == 0"
+      v-if="recordList.length == 0"
       :src="$url + 'mine/20-1.png'"
       mode="widthFix"
     ></image>
@@ -45,24 +61,46 @@
 </template>
 <script>
 var that;
+// 组件地址
+// https://ext.dcloud.net.cn/plugin?id=1377
 var getRpx = require("@/utils/utils.js");
 import { getResquest } from "@/utils/api.js";
 import { shareMixins } from "@/static/mixins/share.js";
+import lvSelect from "@/components/lv-select/lv-select";
 export default {
   mixins: [shareMixins],
   data() {
     return {
       $url: this.url,
-      placeholder: "标题搜索",
-      radius: "50",
-      bgColor: "#fff",
-      height: "",
-      val: "",
-      list: [],
-      newList: [],
-      oldList: [],
-      num: 0,
-      openid: "",
+      flag: false,
+      num: 1,
+      loading: false,
+      showValue: "name", // 需要显示的数据，必须与infoList中的name对应
+      searchValue: "请选择",
+      searchText: "",
+      recordList: [],
+      infoList: [
+        {
+          name: "最近一周",
+          id: 1,
+        },
+        {
+          name: "最近一个月",
+          id: 2,
+        },
+        {
+          name: "最近半年",
+          id: 3,
+        },
+        {
+          name: "最近一年",
+          id: 4,
+        },
+        {
+          name: "全部",
+          id: 5,
+        },
+      ],
     };
   },
   onLoad() {
@@ -74,26 +112,24 @@ export default {
     });
   },
   onShow() {},
-  components: {},
+  components: { lvSelect },
 
   methods: {
     handleSearch(e) {
-      that.val = e;
-      that.newList = [];
-      if (e != "") {
-        that.list.map((res) => {
-          that.num++;
-          if (res.ThingName.includes(e) == true) {
-            that.newList.push(res);
-            that.num = 0;
-          } else {
-            if (that.num >= that.list.length) {
-              that.newList = [];
-            }
-          }
-        });
+      if (e == true) {
+        that.num = 2;
       } else {
-        that.newList = [];
+        that.num = 1;
+      }
+    },
+    change(val) {
+      that.searchText = val.id;
+      that.num = 1;
+      that.GetMyIntegralRecord();
+    },
+    search() {
+      if (that.recordList.length > 0) {
+        that.GetMyIntegralRecord();
       }
     },
     GetMineInfo() {
@@ -102,10 +138,18 @@ export default {
         OpenID: that.openid,
       }).then((res) => {
         console.log(res);
-        that.list = res.data;
+        that.recordList = res.data;
       });
     },
-    moveHandle() {},
+    GetMyIntegralRecord() {
+      getResquest("CommonHelper.ashx?Method=GetMyIntegralRecord", {
+        SearchID: that.searchText, //1一周内、2一月内、3半年内、4一年内、5全部
+        OpenID: that.openid,
+      }).then((res) => {
+        console.log(res);
+        that.recordList = res.data;
+      });
+    },
   },
 };
 </script>
@@ -113,12 +157,30 @@ export default {
 .content {
   position: relative;
   width: 100%;
+  .dropdownMenu {
+    position: absolute;
+    width: 666rpx;
+    left: 42rpx;
+    top: 200rpx;
+    border: 1px solid #ccc;
+    .jiantou {
+      position: absolute;
+      width: 40rpx;
+      top: 20%;
+      right: 20rpx;
+      left: auto;
+    }
+  }
   .search {
     position: absolute;
-    width: 646rpx;
-    left: 52rpx;
-    top: 180rpx;
+    width: 50rpx;
+    top: 208rpx;
+    left: 64rpx;
   }
+  // .clear {
+  //   transform: rotate3d(1, 0, 0, 180deg);
+  //   transform-origin: 50% 40%;
+  // }
   .listBox {
     position: absolute;
     width: 606rpx;
