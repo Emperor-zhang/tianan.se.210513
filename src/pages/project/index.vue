@@ -30,22 +30,52 @@
       mode="widthFix"
       class="img"
     ></image>
-    <swiper
-      class="swiper"
+    <!-- 轮播图 -->
+    <swiper-img
+      v-show="flag == 1"
+      class="swiperbox"
+      :swiperList="swiperList"
       :indicator-dots="indicatorDots"
       :autoplay="autoplay"
-      :circular="true"
+      :circular="circular"
       :interval="interval"
       :duration="duration"
-    >
-      <block v-for="(item, index) in swiperList" :key="index">
-        <swiper-item @click="previewImage(index)">
-          <view class="swiper-item">
-            <image :src="item.imgUrl" mode="scaleToFill"></image>
-          </view>
-        </swiper-item>
-      </block>
-    </swiper>
+      :urls="urls"
+    ></swiper-img>
+    <!-- video -->
+    <swiper-video
+      v-show="flag == 3"
+      class="swiperbox"
+      :swiperList="swiperListVideo"
+      :indicator-dots="indicatorDots"
+      :autoplay="autoplay"
+      :circular="circular"
+      :interval="interval"
+      :duration="duration"
+    ></swiper-video>
+    <!-- vr -->
+    <swiper-vr
+      v-show="flag == 2"
+      class="swiperbox"
+      :swiperList="swiperListVr"
+      :indicator-dots="indicatorDots"
+      :autoplay="autoplay"
+      :circular="circular"
+      :interval="interval"
+      :duration="duration"
+    ></swiper-vr>
+    <!-- swiper按钮 -->
+    <view class="btn">
+      <view :class="['btnimg', flag == 1 ? 'active' : '']" @click="btn(1)"
+        >图片</view
+      >
+      <view :class="['btnvr', flag == 2 ? 'active' : '']" @click="btn(2)"
+        >VR</view
+      >
+      <view :class="['btnvideo', flag == 3 ? 'active' : '']" @click="btn(3)"
+        >视频</view
+      >
+    </view>
     <view class="phone">025-88018889</view>
     <image
       :src="$url + 'project/4-3-1.png'"
@@ -213,6 +243,9 @@
 </template>
 <script>
 var that;
+import swiperImg from "@/components/swiperImg/index.vue";
+import swiperVr from "@/components/swiperVr/index.vue";
+import swiperVideo from "@/components/swiperVideo/index.vue";
 import { shareMixins } from "@/static/mixins/share.js";
 import noticeBar from "@/components/notice-bar/notice-bar.vue";
 import yangrMsg from "@/components/yangr-msg/yangr-msg.vue";
@@ -226,9 +259,13 @@ export default {
       autoplay: false,
       interval: 2000,
       duration: 500,
+      circular: true,
       openid: "",
       urls: [],
+      flag: 1,
       swiperList: [],
+      swiperListVr: [],
+      swiperListVideo: [],
       adviser: [],
       album: [],
       iphone: "025-88018889",
@@ -282,9 +319,13 @@ export default {
   onShow() {
     that.meetState = uni.getStorageSync("meetState");
   },
-  components: { noticeBar, yangrMsg },
+
+  components: { noticeBar, yangrMsg, swiperImg, swiperVideo, swiperVr },
 
   methods: {
+    btn(id) {
+      that.flag = id;
+    },
     MeetCheck() {
       getResquest("CommonHelper.ashx?Method=MeetCheck", {
         OpenID: that.openid,
@@ -307,7 +348,6 @@ export default {
       getResquest("CommonHelper.ashx?Method=GetSimpleInfo", {
         PageIndex: 2, //1 表示首页的前三活动；2 表示项目信息页的 楼盘相册前二或置业顾问前二
       }).then((res) => {
-        console.log(res);
         that.adviser = res.data[0].Adviser;
         that.album = res.data[0].Images;
       });
@@ -318,19 +358,21 @@ export default {
         PageIndex: 2, //1表示首页的轮播图，2表示项目信息页的轮播图
       }).then((res) => {
         console.log(res);
-        that.swiperList = res.data[0].Header;
+        res.data[0].Header.forEach((val) => {
+          if (val.imgType == 1) {
+            that.swiperList.push(val);
+          } else if (val.imgType == 2) {
+            that.swiperListVr.push(val);
+          } else if (val.imgType == 3) {
+            that.swiperListVideo.push(val);
+          }
+        });
         that.urls = that.swiperList.map((res) => {
           return res.imgUrl;
         });
       });
     },
-    // swiper预览
-    previewImage(index) {
-      uni.previewImage({
-        current: index,
-        urls: that.urls,
-      });
-    },
+
     change(e) {
       console.log(e);
     },
@@ -457,24 +499,29 @@ export default {
     display: flex;
     flex-wrap: wrap;
   }
-  .swiper {
+  .swiperbox {
     position: absolute;
     top: 1%;
     width: 666rpx;
     left: 42rpx;
     height: 406rpx;
-    .swiper-item {
+  }
+  .btn {
+    position: absolute;
+    width: 250rpx;
+    left: 250rpx;
+    top: 7.2%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    view {
+      background-color: #ccc;
+      width: 80rpx;
+      height: 40rpx;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
-      position: relative;
-      width: 100%;
-      height: 100%;
-      text {
-        position: absolute;
-        z-index: 1;
-      }
+      border-radius: 10rpx;
     }
   }
   .phone {
@@ -761,6 +808,10 @@ export default {
         width: 230rpx;
       }
     }
+  }
+  .active {
+    background-color: #ff0000 !important;
+    color: #fff;
   }
 }
 </style>

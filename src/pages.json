@@ -149,6 +149,12 @@
       "style": {
         "navigationBarTitleText": "webview"
       }
+    },
+    {
+      "path": "pages/webviewvr/index",
+      "style": {
+        "navigationBarTitleText": "webviewvr"
+      }
     }
   ],
   "tabBar": {
