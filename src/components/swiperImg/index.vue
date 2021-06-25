@@ -8,7 +8,7 @@
       :interval="interval"
       :duration="duration"
     >
-      <block v-for="(item, index) in swiperList" :key="index">
+      <block v-for="(item, index) in listbox" :key="index">
         <swiper-item @click="previewImage(index)">
           <view class="swiper-item">
             <image :src="item.imgUrl" mode="scaleToFill"></image>
@@ -25,6 +25,7 @@ export default {
     return {
       $url: this.url,
       listbox: [],
+      arr: [],
     };
   },
   props: {
@@ -63,6 +64,19 @@ export default {
   },
   created() {},
   mounted() {},
+  watch: {
+    swiperList(n, o) {
+      if (n) {
+        this.listbox = n;
+        // this.listbox.forEach((res) => {
+        //   if (res.imgType == "1") {
+        //     this.arr.push(res);
+        //   }
+        // });
+        // this.listbox = this.listbox.filter((res) => res.imgType === "1");
+      }
+    },
+  },
   methods: {
     // swiper预览
     previewImage(index) {

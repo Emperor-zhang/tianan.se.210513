@@ -321,7 +321,6 @@ export default {
   },
 
   components: { noticeBar, yangrMsg, swiperImg, swiperVideo, swiperVr },
-
   methods: {
     btn(id) {
       that.flag = id;
